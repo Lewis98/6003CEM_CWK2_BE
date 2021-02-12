@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
+const model = require('../models/dogs');
 
 const router = Router({prefix: '/api/v1/dogs'});
 
@@ -14,17 +15,24 @@ router.put('/:id([0-9]{1,})', updateDog);
 router.del('/:id([0-9]{1,})', removeDog);
 
 
-function getAll(ctx, next){
+async function getAll(ctx, next){
 	//Return all dogs from DB
+	
+	let dogs = await model.getAll();
+	if (dogs.length) {
+		ctx.body = dogs;
+	}else{
+		ctx.status = 404;
+	}
 }
 
-function getById(ctx, next){
+async function getById(ctx, next){
 	let id = ctx.params.id;
 
 	//Return dog with passed id
 }
 
-function createDog(ctx, next){
+async function createDog(ctx, next){
 
 	// (requires previous validation)
 
@@ -37,7 +45,7 @@ function createDog(ctx, next){
 	//Return new dog and 201 status code
 }
 
-function updateDog(ctx, next){
+async function updateDog(ctx, next){
 	
 	// (requires previous validation)
 	
@@ -48,7 +56,7 @@ function updateDog(ctx, next){
 	//Return new data from dog object
 }
 
-function removeDog(ctx, next){
+async function removeDog(ctx, next){
 	
 	// (requires authentication)
 	
