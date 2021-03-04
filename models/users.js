@@ -22,12 +22,19 @@ exports.getAll = async () => {
 }
 
 
-// Returns dog record specified by ID
+// Returns user record specified by ID
 exports.getById = async (id) => {
 	const query = "SELECT * FROM users WHERE ID = ?;";
 	const data = [id];
 
 	let result = await db.exec(query, data);
+
+	return result;
+}
+
+exports.getByUsername = async (uName) => {
+	const query = "SELECT * FROM users WHERE username = ?;";
+	let  result = await db.exec(query, uName);
 
 	return result;
 }
