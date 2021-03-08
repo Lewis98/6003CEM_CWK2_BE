@@ -10,6 +10,12 @@ app.use(debug.routes());
 const dogs = require('./routes/dogs.js');
 app.use(dogs.routes());
 
+const users = require('./routes/users.js');
+app.use(users.routes());
+
+const staff = require('./routes/employees.js');
+app.use(staff.routes());
+
 
 
 app.listen(3000);
