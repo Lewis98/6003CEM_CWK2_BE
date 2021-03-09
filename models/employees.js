@@ -4,10 +4,10 @@ const db = require('../helpers/database');
 
 /* - - - - Creation - - - - */
 
-// Create new user in database
-exports.newUser = async (user) => {
-	const query = "INSERT INTO users SET ?";
-	const result = await db.exec(query, user);
+// Create new employee in database
+exports.newUser = async (employee) => {
+	const query = "INSERT INTO employees SET ?";
+	const result = await db.exec(query, employee);
 
 	return result;
 }
@@ -16,9 +16,9 @@ exports.newUser = async (user) => {
 
 /* - - - - Retrieval - - - - */
 
-// Get list of users
+// Get list of all employees
 exports.getAll = async () => {
-	const query = "SELECT * FROM users;"
+	const query = "SELECT * FROM employees;"
 
 	let result = await db.exec(query);
 
@@ -26,9 +26,9 @@ exports.getAll = async () => {
 }
 
 
-// Returns user record specified by ID
+// Returns employee record specified by ID
 exports.getById = async (id) => {
-	const query = "SELECT * FROM users WHERE ID = ?;";
+	const query = "SELECT * FROM employees WHERE ID = ?;";
 	const data = [id];
 
 	let result = await db.exec(query, data);
@@ -36,8 +36,11 @@ exports.getById = async (id) => {
 	return result;
 }
 
+
+// Returns employee record specified by username
 exports.getByUsername = async (uName) => {
-	const query = "SELECT * FROM users WHERE username = ?;";
+	console.log(`Retrieving employee record for '${uName}'`)
+	const query = 'SELECT * FROM employees WHERE username = ?;';
 	let  result = await db.exec(query, uName);
 
 	return result;
