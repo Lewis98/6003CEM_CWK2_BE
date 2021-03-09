@@ -12,9 +12,9 @@ router.get('/:id([0-9]{1,})', getById);
 async function getAll(ctx, next){
 	//Return all users from DB
 	
-	let dogs = await model.getAll();
-	if (dogs.length) {
-		ctx.body = dogs;
+	let users = await model.getAll();
+	if (users.length) {
+		ctx.body = users;
 	}else{
 		ctx.status = 404;
 	}
