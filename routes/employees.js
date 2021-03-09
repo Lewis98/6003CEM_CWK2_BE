@@ -2,6 +2,8 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/employees');
 
+const authenticate = require('../controllers/auth')
+
 const bcrypt = require('bcrypt');
 
 const router = Router({prefix: '/api/v1/staff'});
@@ -10,29 +12,42 @@ const router = Router({prefix: '/api/v1/staff'});
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.get('/test', testcmd);
 
-router.post('/', bodyParser(), newUser);
+router.post('/', authenticate, bodyParser(), newUser);
 
 
 async function getAll(ctx, next){
 	//Return all staff accounts from DB
 	
+	// Retrieve all records from employees table
 	let staff = await model.getAll();
+
+	// If result exists
 	if (staff.length) {
+		// Return to user as response body
 		ctx.body = staff;
 	}else{
-		ctx.status = 404;
+		// Throw internal server error and log to console
+		ctx.status = 500;
+		console.error('Failed to retrieve employee records - No records found');
 	}
 }
 
 async function getById(ctx, next){
 	let id = ctx.params.id;
+	
+	// Retrieve record with specified ID
+	let result = await model.getByID(id);
+	
+	// If result exists
+	if (result.length) {
+		// Return employee record in response body
+		ctx.body = result;
+	}else{
+		// Else error with result not found
+		ctx.status = 404;
+	}
 
-}
-
-async function testcmd(ctx, next){
-	ctx.body = await model.getByUsername('admin');
 }
 
 async function newUser(ctx){
@@ -83,7 +98,7 @@ async function newUser(ctx){
 
 
 
-// Deprecated
+// Deprecated function
 function generateSalt(len){
 	
 	// Instantiate result
