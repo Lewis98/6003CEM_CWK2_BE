@@ -49,7 +49,25 @@ exports.getByUsername = async (uName) => {
 
 /* - - - - Updating - - - - */
 
+exports.updateEmployee = async (employee) => {
+	const query = "UPDATE employees SET ? WHERE ID = ?;";
+	const data = [employee, employee.ID];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
 
 
 /* - - - - Deletion - - - - */
+
+exports.removeDog = async (id) => {
+	const query = "DELETE FROM employees WHERE ID = ?;";
+	const data = [id];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
+
 

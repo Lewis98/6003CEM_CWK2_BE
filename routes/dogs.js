@@ -2,7 +2,7 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/dogs');
 
-const authenticate = require('../strategies/basic')
+const authenticate = require('../controllers/auth')
 
 const router = Router({prefix: '/api/v1/dogs'});
 
@@ -10,11 +10,11 @@ const router = Router({prefix: '/api/v1/dogs'});
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', bodyParser(), createDog);
+router.post('/', authenticate, bodyParser(), createDog);
 
-router.put('/:id([0-9]{1,})', updateDog);
+router.put('/:id([0-9]{1,})', authenticate, updateDog);
 
-router.del('/:id([0-9]{1,})', removeDog);
+router.del('/:id([0-9]{1,})', authenticate, removeDog);
 
 
 async function getAll(ctx, next){
@@ -38,7 +38,7 @@ async function getById(ctx, next){
 	let id = ctx.params.id;
 
 	// Get dog records from database with specified ID
-	let dog = await model.getByID(id);	
+	let dog = await model.getById(id);	
 
 	// If response is not empty
 	if (dog.length) {
@@ -87,7 +87,7 @@ async function updateDog(ctx, next){
 	const body = ctx.request.body;
 
 	// Get record to update
-	let record = await model.getByID(id);
+	let record = await model.getById(id);
 
 	// If record doesn't exist
 	if (!record.length){
@@ -141,9 +141,6 @@ async function removeDog(ctx, next){
 		return;
 	};
 	
-
-	// Remove from database
-	// Return confirmation
 }
 
 

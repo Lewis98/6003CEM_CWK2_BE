@@ -62,7 +62,22 @@ exports.getById = async (id) => {
 
 /* - - - - Updating - - - - */
 
+exports.updateDog = async (dog) => {
+	const query = "UPDATE dogs SET ? WHERE ID = ?;";
+	const data = [dog, dog.ID];
 
+	let result = await db.exec(query, data);
+
+	return result;
+}
 
 /* - - - - Deletion - - - - */
 
+exports.removeDog = async (id) => {
+	const query = "DELETE FROM dogs WHERE ID = ?;";
+	const data = [id];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}

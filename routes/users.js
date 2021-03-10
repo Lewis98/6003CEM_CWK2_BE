@@ -2,11 +2,15 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/users');
 
+const authenticate = require('../controllers/auth')
+
 const router = Router({prefix: '/api/v1/users'});
 
 
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
+
+router.post('/', newUser);
 
 
 async function getAll(ctx, next){
@@ -67,7 +71,6 @@ async function newUser(ctx, next){
 		console.error('Failed to create User with parameters:');
 		console.error(`${body}`);
 	}
-
 
 }
 

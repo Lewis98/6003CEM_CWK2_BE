@@ -46,7 +46,24 @@ exports.getByUsername = async (uName) => {
 
 /* - - - - Updating - - - - */
 
+exports.updateUser = async (user) => {
+	const query = "UPDATE users SET ? WHERE ID = ?;";
+	const data = [user, user.ID];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
 
 
 /* - - - - Deletion - - - - */
+
+exports.removeDog = async (id) => {
+	const query = "DELETE FROM users WHERE ID = ?;";
+	const data = [id];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
 
