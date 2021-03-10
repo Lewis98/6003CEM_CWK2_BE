@@ -2,7 +2,8 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/users');
 
-const authenticate = require('../controllers/auth')
+const authenticate = require('../controllers/auth');
+const bcrypt = require('bcrypt');
 
 const router = Router({prefix: '/api/v1/users'});
 
@@ -53,24 +54,47 @@ async function newUser(ctx, next){
 	const body = ctx.request.body;
 
 	// TODO: Validate input
+	
+	// Generate Salt (10 rounds of generation)
+	body.passSalt = await bcrypt.genSalt(10);
 
-	// Add user to database
-	const result = await model.newUser(body);
+	// Hash password and pass error or result to function
+	await bcrypt.hash(body.password, body.passSalt, async (e, hash) => {
+		if (!e) {
+			
+			// Store hash as new password field
+			body.password = hash;
 
-	// If result is success
-	if (result) {
-		// Get new user id
-		const id = result.insertID;
-		// Set response status to Created success
-		ctx.status = 201;
-		// Set response body to ID of new user
-		ctx.body = {ID: id};
-	} else {
-		// Otherwise if failed, send internal server error and log to console
-		ctx.status = 500;
-		console.error('Failed to create User with parameters:');
-		console.error(`${body}`);
-	}
+			// Attempt to add user to database using model
+			const result = await model.newUser(body);
+			
+			// If successful
+			if (result) {
+				// Log success
+				console.log (`'${body.username}' successfully created in database with values:`)
+				console.log (body);
+
+				// Return success and new employee ID
+				const id = result.insertID;
+				ctx.status = 201;
+				ctx.body = {ID: id};
+			} else {
+				// Else log error and display body to console
+				console.error(`Failed to create user '${body.username}' to database with data: `)
+				console.error(body);
+
+				// And return internal server error to user
+				ctx.status = 500;
+				ctx.body = {message: "Failed to create user"};
+			}
+		} else {
+
+			// If hash fails log to console and return internal server error
+			console.error(`Error hashing: '${e}'`);
+			ctx.status = 500;
+			ctx.body = {message: "Failed to create user"};
+		}
+	});
 
 }
 

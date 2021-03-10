@@ -72,7 +72,7 @@ async function newUser(ctx){
 			// If successful
 			if (result) {
 				// Log success
-				console.log (`'$(body.username)' successfully created in database with values:`)
+				console.log (`'${body.username}' successfully created in database with values:`)
 				console.log (body);
 
 				// Return success and new employee ID
@@ -81,7 +81,7 @@ async function newUser(ctx){
 				ctx.body = {ID: id};
 			} else {
 				// Else log error and display body to console
-				console.error(`Failed to add '$(body.username)' to database with data: `)
+				console.error(`Failed to add '${body.username}' to database with data: `)
 				console.error(body);
 
 				// And return internal server error to user
@@ -90,7 +90,7 @@ async function newUser(ctx){
 		} else {
 
 			// If hash fails log to console and return internal server error
-			console.error(`Error hashing: '$(e)'`);
+			console.error(`Error hashing: '${e}'`);
 			ctx.status = 500;
 		}
 	});
