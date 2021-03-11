@@ -2,7 +2,9 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/dogs');
 
-const authenticate = require('../controllers/auth')
+const authenticate = require('../controllers/auth');
+const {validate} = require('../controllers/validation');
+
 
 const router = Router({prefix: '/api/v1/dogs'});
 
@@ -10,7 +12,7 @@ const router = Router({prefix: '/api/v1/dogs'});
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', authenticate, bodyParser(), createDog);
+router.post('/', authenticate, validate("dog"), bodyParser(), createDog);
 
 router.put('/:id([0-9]{1,})', authenticate, updateDog);
 

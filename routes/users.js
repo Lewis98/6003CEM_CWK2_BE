@@ -5,13 +5,16 @@ const model = require('../models/users');
 const authenticate = require('../controllers/auth');
 const bcrypt = require('bcrypt');
 
+const {validate} = require('../controllers/validation');
+
+
 const router = Router({prefix: '/api/v1/users'});
 
 
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', newUser);
+router.post('/', validate("user"), newUser);
 
 
 async function getAll(ctx, next){

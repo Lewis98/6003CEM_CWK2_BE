@@ -2,7 +2,8 @@ const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/employees');
 
-const authenticate = require('../controllers/auth')
+const authenticate = require('../controllers/auth');
+const {validate} = require('../controllers/validation');
 
 const bcrypt = require('bcrypt');
 
@@ -13,7 +14,7 @@ router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
 
 
-router.post('/', authenticate, bodyParser(), newUser);
+router.post('/', authenticate, bodyParser(), validate("employee"), newUser);
 
 
 async function getAll(ctx, next){

@@ -1,6 +1,6 @@
 module.exports = {
 	"$schema": "https://json-schema.org/draft-04/schema#",
-	"$id": ?,
+//	"$id": "?",
 
 	"title": "Dog",
 	"description": "A dog entity",
