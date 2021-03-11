@@ -1,5 +1,5 @@
 const BasicStrat = require('passport-http').BasicStrategy;
-const staff = require('../models/employees');
+const users = require('../models/users');
 
 const bcrypt = require('bcrypt');
 
@@ -17,7 +17,7 @@ const cb_basicAuth = async (uName, password, done) => {
 
 	try {
 		// retrieve result from database with username
-		dbResult = await staff.getByUsername(uName);
+		dbResult = await users.getByUsername(uName);
 	} catch(e) {
 		// If error, log to console and call callback with error (and failed auth)
 		console.error(`Authentication of $(uName) failed with error: '${e}'`);
