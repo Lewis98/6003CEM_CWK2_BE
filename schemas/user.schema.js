@@ -26,6 +26,27 @@ module.exports = {
 			"description": "User's email account"
 		},
 
+		"firstName": {
+			"type": "string",
+			"maxLength": 50,
+
+			"description": "first name"
+		},
+		
+		"lastName": {
+			"type": "string",
+			"maxLength": 50,
+
+			"description": "last name"
+		},
+
+		"siteID": {
+			"type": "integer",
+
+			"description": "ID of site where employee is based"
+		},
+
+
 		"image": {
 			"type": "string",
 			"maxLength": 50,

@@ -36,6 +36,7 @@ exports.getById = async (id) => {
 	return result;
 }
 
+// Returns user record specified by username
 exports.getByUsername = async (uName) => {
 	const query = "SELECT * FROM users WHERE username = ?;";
 	let  result = await db.exec(query, uName);
@@ -66,4 +67,5 @@ exports.removeDog = async (id) => {
 
 	return result;
 }
+
 
