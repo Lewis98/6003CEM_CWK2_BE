@@ -7,18 +7,25 @@ const bcrypt = require('bcrypt');
 
 const {validate} = require('../controllers/validation');
 
+const allowedTo = require('../permissions/users');
+
 
 const router = Router({prefix: '/api/v1/users'});
 
 
-router.get('/', getAll);
+router.get('/', authenticate, getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', validate("user"), newUser);
+router.post('/', validate("user"), bodyParser(), newUser);
 
 
 async function getAll(ctx, next){
 	// Return all users from DB
+		
+	if (!allowedTo.readAll(ctx.state.user)){
+		ctx.status = 403;
+		return;
+	}
 	
 	// Retrieve all users from db using model
 	let users = await model.getAll();
