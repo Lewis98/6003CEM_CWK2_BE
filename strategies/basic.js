@@ -35,7 +35,13 @@ const cb_basicAuth = async (uName, password, done) => {
 		if (checkPass(user, password)) {
 			// If succeeds log a successful attempt
 			console.log(`Request from ${uName} authenticated.`)
-			// and call callback function with no error and user record
+
+			// Get roles of user
+			userRoles = await users.getRoles(user.ID);
+			// Add roles to user object
+			user.roles = userRoles;
+
+			// and call callback function with no error and user record	
 			return done(null, user);
 		} else {
 			// Else incorrect password, log failed attempt
