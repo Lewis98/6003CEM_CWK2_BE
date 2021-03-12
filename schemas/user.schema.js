@@ -47,7 +47,7 @@ module.exports = {
 		},
 
 
-		"image": {
+		"profileImg": {
 			"type": "string",
 			"maxLength": 50,
 
