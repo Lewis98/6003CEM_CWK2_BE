@@ -44,6 +44,26 @@ exports.getByUsername = async (uName) => {
 	return result;
 }
 
+exports.getRoles = async (id) => {
+
+	// Get all records in role_assignments linked to user ID
+	let query = "SELECT * FROM role_assignments WHERE userId = ?;";
+	let data = [id];
+
+	let result = await db.exec(query, data);
+
+	// Get role names from roles table that match returned role ID's from previous query
+	query = "SELECT role FROM roles WHERE id = ?";
+	data = [];
+	result.forEach (row => {
+		data.push(row.roleId);
+	});
+	
+	result = await db.exec(query, data);
+
+	return result;
+}
+
 
 /* - - - - Updating - - - - */
 
