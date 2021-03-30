@@ -13,6 +13,19 @@ exports.newUser = async (user) => {
 }
 
 
+// Add role to user
+exports.addRole = async (id, role) => {
+
+	const assignment = {
+		userId: id,
+		roleId: role
+	}
+
+	const query = "INSERT INTO role_assignments SET ?";
+	const result = await db.exec(query, assignment);
+
+	return result;
+}
 
 /* - - - - Retrieval - - - - */
 
@@ -79,7 +92,7 @@ exports.updateUser = async (user) => {
 
 /* - - - - Deletion - - - - */
 
-exports.removeDog = async (id) => {
+exports.removeUser = async (id) => {
 	const query = "DELETE FROM users WHERE ID = ?;";
 	const data = [id];
 
