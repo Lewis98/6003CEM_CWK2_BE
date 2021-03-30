@@ -63,7 +63,14 @@ async function newUser(ctx, next){
 	// Get body of request
 	const body = ctx.request.body;
 
-	// TODO: Validate input
+	// Set role if none
+	let role;
+	if (body.role == undefined) {
+		role = 0;
+	} else {
+		role = body.role;
+		delete body.role;
+	}
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
@@ -84,10 +91,27 @@ async function newUser(ctx, next){
 				console.log (`'${body.username}' successfully created in database with values:`)
 				console.log (body);
 
+				// Get ID from new record
+				const id = result.insertId;
+				
+				// Add role to role assignment table
+				const roleAssignment = await model.addRole(id, role);
+
+				if (roleAssignment == undefined) {
+					// - - - Failed to create role for user - - - 
+					// Delete user record
+					await model.removeUser(id);
+					// Log error to console
+					console.error(`Failed to create role:'${role}' for user:'${body.username}'`);
+					// Serve internal server error to user
+					ctx.status = 500;
+				}
+				
+				
 				// Return success and new employee ID
-				const id = result.insertID;
 				ctx.status = 201;
 				ctx.body = {ID: id};
+
 			} else {
 				// Else log error and display body to console
 				console.error(`Failed to create user '${body.username}' to database with data: `)
