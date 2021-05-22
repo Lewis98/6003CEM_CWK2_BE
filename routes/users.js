@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 
 const {validate} = require('../controllers/validation');
 
-const allowedTo = require('../permissions/users');
+const can = require('../permissions/users');
 
 
 const router = Router({prefix: '/api/v1/users'});
@@ -21,10 +21,13 @@ router.post('/', validate("user"), bodyParser(), newUser);
 
 async function getAll(ctx, next){
 	// Return all users from DB
-		
-	if (!allowedTo.readAll(ctx.state.user)){
-		ctx.status = 403;
-		return;
+	
+	// Get permission status based on user role
+	const perm  = can.readAll(ctx.state.user);
+	// If permission is not granted
+	if (!perm.granted){
+		ctx.status = 403; // Return forbidden status code
+		return; // Return to prevent retrieval of data
 	}
 	
 	// Retrieve all users from db using model
