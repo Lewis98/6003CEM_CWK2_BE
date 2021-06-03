@@ -13,6 +13,19 @@ exports.newUser = async (user) => {
 }
 
 
+// Add role to user
+exports.addRole = async (id, role) => {
+
+	const assignment = {
+		userId: id,
+		roleId: role
+	}
+
+	const query = "INSERT INTO role_assignments SET ?";
+	const result = await db.exec(query, assignment);
+
+	return result;
+}
 
 /* - - - - Retrieval - - - - */
 
@@ -44,6 +57,26 @@ exports.getByUsername = async (uName) => {
 	return result;
 }
 
+exports.getRoles = async (id) => {
+
+	// Get all records in role_assignments linked to user ID
+	let query = "SELECT * FROM role_assignments WHERE userId = ?;";
+	let data = [id];
+
+	let result = await db.exec(query, data);
+
+	// Get role names from roles table that match returned role ID's from previous query
+	query = "SELECT role FROM roles WHERE id = ?";
+	data = [];
+	result.forEach (row => {
+		data.push(row.roleId);
+	});
+	
+	result = await db.exec(query, data);
+
+	return result;
+}
+
 
 /* - - - - Updating - - - - */
 
@@ -59,7 +92,7 @@ exports.updateUser = async (user) => {
 
 /* - - - - Deletion - - - - */
 
-exports.removeDog = async (id) => {
+exports.removeUser = async (id) => {
 	const query = "DELETE FROM users WHERE ID = ?;";
 	const data = [id];
 

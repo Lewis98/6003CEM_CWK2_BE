@@ -7,18 +7,28 @@ const bcrypt = require('bcrypt');
 
 const {validate} = require('../controllers/validation');
 
+const can = require('../permissions/users');
+
 
 const router = Router({prefix: '/api/v1/users'});
 
 
-router.get('/', getAll);
+router.get('/', authenticate, getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', validate("user"), newUser);
+router.post('/', validate("user"), bodyParser(), newUser);
 
 
 async function getAll(ctx, next){
 	// Return all users from DB
+	
+	// Get permission status based on user role
+	const perm  = can.readAll(ctx.state.user);
+	// If permission is not granted
+	if (!perm.granted){
+		ctx.status = 403; // Return forbidden status code
+		return; // Return to prevent retrieval of data
+	}
 	
 	// Retrieve all users from db using model
 	let users = await model.getAll();
@@ -56,7 +66,14 @@ async function newUser(ctx, next){
 	// Get body of request
 	const body = ctx.request.body;
 
-	// TODO: Validate input
+	// Set role if none
+	let role;
+	if (body.role == undefined) {
+		role = 0;
+	} else {
+		role = body.role;
+		delete body.role;
+	}
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
@@ -77,10 +94,27 @@ async function newUser(ctx, next){
 				console.log (`'${body.username}' successfully created in database with values:`)
 				console.log (body);
 
+				// Get ID from new record
+				const id = result.insertId;
+				
+				// Add role to role assignment table
+				const roleAssignment = await model.addRole(id, role);
+
+				if (roleAssignment == undefined) {
+					// - - - Failed to create role for user - - - 
+					// Delete user record
+					await model.removeUser(id);
+					// Log error to console
+					console.error(`Failed to create role:'${role}' for user:'${body.username}'`);
+					// Serve internal server error to user
+					ctx.status = 500;
+				}
+				
+				
 				// Return success and new employee ID
-				const id = result.insertID;
 				ctx.status = 201;
 				ctx.body = {ID: id};
+
 			} else {
 				// Else log error and display body to console
 				console.error(`Failed to create user '${body.username}' to database with data: `)

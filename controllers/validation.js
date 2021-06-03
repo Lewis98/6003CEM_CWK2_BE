@@ -33,7 +33,7 @@ exports.validate = (schema_str) => async (ctx, next) => {
 		// Otherwise if exception raised and is a validation error
 		if (e instanceof pkg.ValidationError) {
 			// Send error message to user
-			ctx.boddy = e;
+			ctx.body = e;
 			// And set status to bad request
 			ctx.status = 400;
 		} else {
