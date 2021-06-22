@@ -4,7 +4,7 @@ const db = require('../helpers/database');
 /* - - - - Creation - - - - */
 
 // Create new role in database
-exports.addRole = async (role){
+exports.addRole = async (role) => {
 	const query = "INSERT INTO roles SET ?;";
 	
 	let result = await db.exec(query, role);
@@ -15,7 +15,7 @@ exports.addRole = async (role){
 
 // Creates new link in role_assignments table
 // Adding an existing role to user
-exports.assignRole = async (id, roleId){
+exports.assignRole = async (id, roleId) => {
 
 	const data = {
 		userId: id,
