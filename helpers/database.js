@@ -17,7 +17,7 @@ exports.exec = async function exec (query, data) {
 		// Return retrieved data
 		return result;
 	}catch (e) {
-		// Log exception (e), query and data to console
+		// Log exception (e), query and data to console if error
 		console.error(e, query, data);
 
 		throw 'Database query error';

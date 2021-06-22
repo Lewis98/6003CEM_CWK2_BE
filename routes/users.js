@@ -1,6 +1,9 @@
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
+
+
 const model = require('../models/users');
+const model_roles = require('../models/roles'); // Used for role manipulation
 
 const authenticate = require('../controllers/auth');
 const bcrypt = require('bcrypt');
@@ -98,7 +101,7 @@ async function newUser(ctx, next){
 				const id = result.insertId;
 				
 				// Add role to role assignment table
-				const roleAssignment = await model.addRole(id, role);
+				const roleAssignment = await model_roles.assignRole(id, role);
 
 				if (roleAssignment == undefined) {
 					// - - - Failed to create role for user - - - 
@@ -111,7 +114,7 @@ async function newUser(ctx, next){
 				}
 				
 				
-				// Return success and new employee ID
+				// Return success and new ID
 				ctx.status = 201;
 				ctx.body = {ID: id};
 

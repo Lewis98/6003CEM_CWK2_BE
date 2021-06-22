@@ -40,13 +40,6 @@ module.exports = {
 			"description": "last name"
 		},
 
-		"siteID": {
-			"type": "integer",
-
-			"description": "ID of site where employee is based"
-		},
-
-
 		"profileImg": {
 			"type": "string",
 			"maxLength": 50,

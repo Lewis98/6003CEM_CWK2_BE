@@ -1,5 +1,6 @@
 const BasicStrat = require('passport-http').BasicStrategy;
 const users = require('../models/users');
+const roles = require('../models/roles');
 
 const bcrypt = require('bcrypt');
 
@@ -37,7 +38,7 @@ const cb_basicAuth = async (uName, password, done) => {
 			console.log(`Request from ${uName} authenticated.`)
 
 			// Get roles of user
-			userRoles = await users.getRoles(user.ID);
+			userRoles = await roles.getAssignmentsByUserId(user.ID);
 			// Create array for roles against user object
 			user.roles = []
 			
