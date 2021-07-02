@@ -1,6 +1,10 @@
 const Koa = require('koa');
 const app = new Koa();
 
+// Cross Origin Resource Sharing
+const cors = require('@koa/cors');
+app.use(cors());
+
 
 // Debug routes for testing and validation
 const debug = require('./routes/debug');

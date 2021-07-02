@@ -52,6 +52,10 @@ exports.validate = (schema_str) => async (ctx, next) => {
 	} catch (e) {
 		// Otherwise if exception raised and is a validation error
 		if (e instanceof pkg.ValidationError) {
+			
+			console.log("Failed validation for request:");
+			console.log(body);
+			
 			// Send error message to user
 			ctx.body = e;
 			// And set status to bad request

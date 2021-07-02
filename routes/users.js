@@ -13,13 +13,15 @@ const {validate} = require('../controllers/validation');
 const can = require('../permissions/users');
 
 
-const router = Router({prefix: '/api/v1/users'});
+const prefix = '/api/v1/users';
+const router = Router({prefix: prefix});
 
 
 router.get('/', authenticate, getAll);
 router.get('/:id([0-9]{1,})', getById);
 
-router.post('/', validate("user"), bodyParser(), newUser);
+router.post('/', validate("user"), bodyParser(), newUser); // User Registration
+router.post('/login', authenticate, login); // User login
 
 
 async function getAll(ctx, next){
@@ -72,7 +74,7 @@ async function newUser(ctx, next){
 	// Set role if none
 	let role;
 	if (body.role == undefined) {
-		role = 0;
+		role = 1;
 	} else {
 		role = body.role;
 		delete body.role;
@@ -138,6 +140,17 @@ async function newUser(ctx, next){
 
 }
 
+async function login(ctx) {
 
+	console.log(ctx.state.user);
+
+	const {ID, firstName, lastName, username, email, profileImg, roles} = ctx.state.user
+	const links = {
+		self: `${ctx.protocol}://${ctx.host}${prefix}/${ID}`
+	}
+
+	ctx.body = {ID, firstName, lastName, username, email, profileImg, roles};
+
+}
 
 module.exports = router;

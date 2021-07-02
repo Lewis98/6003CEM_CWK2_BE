@@ -39,6 +39,7 @@ const cb_basicAuth = async (uName, password, done) => {
 
 			// Get roles of user
 			userRoles = await roles.getAssignmentsByUserId(user.ID);
+
 			// Create array for roles against user object
 			user.roles = []
 			
