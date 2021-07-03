@@ -1,6 +1,9 @@
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
+
+
 const model = require('../models/users');
+const model_roles = require('../models/roles'); // Used for role manipulation
 
 const authenticate = require('../controllers/auth');
 const bcrypt = require('bcrypt');
@@ -10,13 +13,15 @@ const {validate} = require('../controllers/validation');
 const can = require('../permissions/users');
 
 
-const router = Router({prefix: '/api/v1/users'});
+const prefix = '/api/v1/users';
+const router = Router({prefix: prefix});
 
 
 router.get('/', authenticate, getAll);
-router.get('/:id([0-9]{1,})', getById);
+router.get('/:id([0-9]{1,})', authenticate, getById);
 
-router.post('/', validate("user"), bodyParser(), newUser);
+router.post('/', validate("user"), bodyParser(), newUser); // User Registration
+router.post('/login', authenticate, login); // User login
 
 
 async function getAll(ctx, next){
@@ -48,10 +53,28 @@ async function getById(ctx, next){
 	let id = ctx.params.id;
 	
 	// Retrieve all users from db using model
-	let user = await model.getByID(id);
+	let user = await model.getById(id);
+
+	// Get permission status based on user role
+	const perm  = can.read(ctx.state.user, user[0]);
+	// If permission is not granted
+	if (!perm.granted){
+		ctx.status = 403; // Return forbidden status code
+		return; // Return to prevent retrieval of data
+	}
+
 
 	// if result is not empty
 	if (user.length) {
+		const roleAssignment = await model_roles.getAssignmentsByUserId(user[0].ID);
+		if(roleAssignment.length){
+			user[0].roles = [roleAssignment[0].role];
+		}else{
+			ctx.status = 500;
+		}
+	
+		console.log(user);
+
 		// Return result as response body
 		ctx.body = user;
 	}else{
@@ -69,11 +92,14 @@ async function newUser(ctx, next){
 	// Set role if none
 	let role;
 	if (body.role == undefined) {
-		role = 0;
+		role = 1;
 	} else {
-		role = body.role;
-		delete body.role;
+		role = 1 //body.role; // Only allow registration as user
+		delete body.role;     // Accounts are updated by administrator
 	}
+
+	console.log("Registration request recieved:")
+	console.log(body);
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
@@ -98,7 +124,7 @@ async function newUser(ctx, next){
 				const id = result.insertId;
 				
 				// Add role to role assignment table
-				const roleAssignment = await model.addRole(id, role);
+				const roleAssignment = await model_roles.assignRole(id, role);
 
 				if (roleAssignment == undefined) {
 					// - - - Failed to create role for user - - - 
@@ -111,7 +137,7 @@ async function newUser(ctx, next){
 				}
 				
 				
-				// Return success and new employee ID
+				// Return success and new ID
 				ctx.status = 201;
 				ctx.body = {ID: id};
 
@@ -135,6 +161,17 @@ async function newUser(ctx, next){
 
 }
 
+async function login(ctx) {
 
+	console.log(ctx.state.user);
+
+	const {ID, firstName, lastName, username, email, profileImg, roles} = ctx.state.user
+	const links = {
+		self: `${ctx.protocol}://${ctx.host}${prefix}/${ID}`
+	}
+
+	ctx.body = {ID, firstName, lastName, username, email, profileImg, roles};
+
+}
 
 module.exports = router;

@@ -25,8 +25,10 @@ exports.readAll = (req) => {
 };
 
 exports.read = (req, data) => {
+
+
 	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.ID}).execute('read').sync().on('user');
 };
 
-exports.read = (req, data) => ac.can(req.role).context
+//exports.read = (req, data) => ac.can(req.role).context
 
