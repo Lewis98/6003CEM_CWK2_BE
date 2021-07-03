@@ -28,7 +28,7 @@ exports.getAll = async () => {
 
 // Returns user record specified by ID
 exports.getById = async (id) => {
-	const query = "SELECT * FROM users WHERE ID = ?;";
+	const query = "SELECT ID, username, firstName, lastName, profileImg, email, dateRegistered FROM users WHERE ID = ?;";
 	const data = [id];
 
 	let result = await db.exec(query, data);

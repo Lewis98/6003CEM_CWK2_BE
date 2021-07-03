@@ -37,6 +37,15 @@ exports.getById = async (id) => {
 	return result;
 }
 
+exports.getByUserId = async (id) => {
+	const query = "SELECT * FROM applications WHERE applicant_id = ?;";
+	const data = [id];
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
+
 
 /* - - - - Updating - - - - */
 

@@ -67,7 +67,7 @@ exports.getAssignmentsByUserId = async (id) => {
 	const data = [id];
 
 	// Query selects all of role assignments and joins role name from roles table for simplicity
-	const query = "SELECT role_assignments.id, userId, roleId, roles.role FROM role_assignments WHERE userId = ? INNER JOIN roles ON role_assignments.roleId=roles.id;";
+	const query = "SELECT role_assignments.id, userId, roleId, roles.role FROM role_assignments INNER JOIN roles ON role_assignments.roleId=roles.id WHERE userId = ?;";
 	
 	let result = await db.exec(query, data);
 
