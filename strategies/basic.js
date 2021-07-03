@@ -4,13 +4,6 @@ const roles = require('../models/roles');
 
 const bcrypt = require('bcrypt');
 
-
-const checkPass = (user, pass) => {	
-	const match = bcrypt.compare(pass, user.password);
-
-	return match;
-}
-
 const cb_basicAuth = async (uName, password, done) => {
 
 	// Instantiate result as undefined
@@ -33,7 +26,7 @@ const cb_basicAuth = async (uName, password, done) => {
 		const user = dbResult[0];
 
 		// Perform password validation
-		if (checkPass(user, password)) {
+		if (await bcrypt.compare(password, user.password)) {
 			// If succeeds log a successful attempt
 			console.log(`Request from ${uName} authenticated.`)
 
@@ -55,7 +48,7 @@ const cb_basicAuth = async (uName, password, done) => {
 			return done(null, user);
 		} else {
 			// Else incorrect password, log failed attempt
-			console.log(`Authentication failed from '$(uName)'`);
+			console.log(`Authentication failed from '${uName}'`);
 			// and return failed authentication (and no error)
 			return done(null, false);
 		}
