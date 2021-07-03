@@ -18,7 +18,7 @@ const router = Router({prefix: prefix});
 
 
 router.get('/', authenticate, getAll);
-router.get('/:id([0-9]{1,})', getById);
+router.get('/:id([0-9]{1,})', authenticate, getById);
 
 router.post('/', validate("user"), bodyParser(), newUser); // User Registration
 router.post('/login', authenticate, login); // User login
@@ -53,10 +53,28 @@ async function getById(ctx, next){
 	let id = ctx.params.id;
 	
 	// Retrieve all users from db using model
-	let user = await model.getByID(id);
+	let user = await model.getById(id);
+
+	// Get permission status based on user role
+	const perm  = can.read(ctx.state.user, user[0]);
+	// If permission is not granted
+	if (!perm.granted){
+		ctx.status = 403; // Return forbidden status code
+		return; // Return to prevent retrieval of data
+	}
+
 
 	// if result is not empty
 	if (user.length) {
+		const roleAssignment = await model_roles.getAssignmentsByUserId(user[0].ID);
+		if(roleAssignment.length){
+			user[0].roles = [roleAssignment[0].role];
+		}else{
+			ctx.status = 500;
+		}
+	
+		console.log(user);
+
 		// Return result as response body
 		ctx.body = user;
 	}else{
@@ -76,9 +94,12 @@ async function newUser(ctx, next){
 	if (body.role == undefined) {
 		role = 1;
 	} else {
-		role = body.role;
-		delete body.role;
+		role = 1 //body.role; // Only allow registration as user
+		delete body.role;     // Accounts are updated by administrator
 	}
+
+	console.log("Registration request recieved:")
+	console.log(body);
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
