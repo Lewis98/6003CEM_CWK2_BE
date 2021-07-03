@@ -5,12 +5,13 @@ const model = require('../models/applications');
 const authenticate = require('../controllers/auth');
 const {validate} = require('../controllers/validation');
 
-
-const router = Router({prefix: '/api/v1/applications'});
+const prefix = '/api/v1/'
+const router = Router({prefix: prefix + 'applications'});
 
 
 router.get('/', getAll);
 router.get('/:id([0-9]{1,})', getById);
+router.get('/user/:id([0-9]{1,})', getByUserId);
 
 router.post('/', authenticate, validate("application"), bodyParser(), createApp);
 
@@ -43,12 +44,37 @@ async function getById(ctx, next){
 
 	// If response is not empty
 	if (application.length) {
+		const links = {
+			user: `https://${ctx.host}${prefix}users/${application[0].applicant_id}`
+		}
+
+		application[0].links = links;
+
 		// Send result in response body
 		ctx.body = application;
+
 	}else{
 		// Else error
 		ctx.status = 404;
 	}
+}
+
+async function getByUserId(ctx, next) {
+	let id = ctx.params.id;
+
+	// Get application record from database with specified ID
+	let application = await model.getByUserId(id);	
+
+	// If response is not empty
+	if (application.length) {
+		// Send result in response body
+		ctx.body = application;
+
+	}else{
+		// Else error
+		ctx.status = 404;
+	}
+
 }
 
 async function createApp(ctx, next) {
@@ -80,7 +106,7 @@ async function createApp(ctx, next) {
 	} else {
 		// Otherwise if failed, send internal server error and log to console
 		ctx.status = 500;
-		console.error('Failed to create dog with parameters:');
+		console.error('Failed to create application with parameters:');
 		console.error(`${body}`);
 	}
 	
