@@ -1,6 +1,7 @@
-module.exports = {
+{
 	"$schema": "https://json-schema.org/draft-04/schema#",
-//	"$id": "?",
+	"definitions": {
+		"
 
 	"title": "Role",
 	"description": "A role type that can be assigned to users",

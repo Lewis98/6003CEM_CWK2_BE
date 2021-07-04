@@ -1,0 +1,16 @@
+{
+
+"$schema": "https://json-schema.org/draft-04/schema#",
+"definitions": {
+	"siteImage": {
+		"title": "Image",
+		"description": "Image of company site",
+
+		"type": "object",
+		"properties": {
+			"
+		}
+	}
+}
+
+}
