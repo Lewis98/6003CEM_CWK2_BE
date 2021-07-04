@@ -1,3 +1,10 @@
+/**
+ * Routes module for license applications
+ *
+ * @module routes/apps
+ * @author Lewis Stokes
+ */
+
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
 const model = require('../models/applications');
@@ -9,8 +16,8 @@ const prefix = '/api/v1/'
 const router = Router({prefix: prefix + 'applications'});
 
 
-router.get('/', getAll);
-router.get('/:id([0-9]{1,})', getById);
+router.get('/', authenticate, getAll);
+router.get('/:id([0-9]{1,})', authenticate, getById);
 router.get('/user/:id([0-9]{1,})', getByUserId);
 
 router.post('/', authenticate, validate("application"), bodyParser(), createApp);
@@ -20,6 +27,12 @@ router.put('/:id([0-9]{1,})', authenticate, updateApp);
 router.del('/:id([0-9]{1,})', authenticate, deleteApp);
 
 
+/**
+ * getAll
+ * @description Returns all applications from DB.
+ * @oarm {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
 async function getAll(ctx, next){
 	//Return all applications from database
 
