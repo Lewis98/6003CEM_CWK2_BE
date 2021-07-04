@@ -1,0 +1,48 @@
+const AC = require('role-acl');
+const ac = new AC();
+
+
+
+
+// Controls setup
+ac.grant('user')
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('read').on('user', ['*', '!password'])
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('update').on('user', ['password', 'lastOnline', 'email', 'profileImg', 'firstName', 'lastName'])
+
+ac.grant('admin')
+  	.execute('read').on('user')
+	.execute('update').on('all_users');
+
+
+
+// Permission checks
+
+exports.readAll = (req) => {
+
+	// Disallow by default
+	let allowed = false;
+
+	// For each role that the user holds
+	req.roles.forEach((r) => {
+
+		console.log(r)
+
+		console.log(typeof r);
+
+		// If role is allowed access
+		if (ac.can(r).execute('read').sync().on('all_users')){
+			// Allow user to access / execute by setting allowed to true
+			allowed = true;
+		}
+	})
+
+	console.log(`${req.username} can access: '${allowed}'`)
+
+	// Return final allowed value after loop
+	return allowed;
+
+//	ac.can(req.role).execute('read').sync().on('users')
+};
+
+exports.read = (req, data) => ac.can(req.role).context
+

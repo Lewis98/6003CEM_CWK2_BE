@@ -1,27 +1,36 @@
+/**
+ * Module for the validation of JSON data against appropriate schemas
+ *
+ * @module controllers/validation
+ * @author Lewis Stokes
+ * @see schemas/* for JSON Schema definitions
+ */
+
 const pkg = require('jsonschema');
+
 
 
 // Define potential schemas to validate against
 // This allows a single function to perform validation for all schemas
 const schemas = {
-	application: require('../schemas/app.schema.js'),
-	user: require('../schemas/user.schema.js'),
-	role: require('../schemas/role.schema.js')
+	application: require('../schemas/app.json').definitions.user,
+	user: require('../schemas/user.json').definitions.user
+//	role: require('../schemas/role.schema.js')
 };
 
 
 const v = new pkg.Validator();
 
 
-// Validation function
+/**
+ * @function
+ * Koa middleware validation function
+ * @param {string} schema_str - Dictionary Key to identify appropriate schema values: [application, user]
+ * @param {object} ctx - Koa request context object to validate
+ * @param {function} next - Koa next callback
+ */
 exports.validate = (schema_str) => async (ctx, next) => {
 
-	/*
-	 *	Validation function
-	 *	
-	 *	Input:
-	 *	  - schema_str (str) - Key of schema to use defined above
-	 * */
 
 	// Paramters defined for use in Validator validate method
 	const params = {

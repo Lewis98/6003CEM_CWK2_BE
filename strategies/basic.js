@@ -1,9 +1,25 @@
+/**
+ * Basic access authentication strategy module for user authentication
+ *
+ * @module strategies/basic
+ * @author Lewis Stokes
+ * @see controllers/auth for use 
+ */
+
 const BasicStrat = require('passport-http').BasicStrategy;
 const users = require('../models/users');
 const roles = require('../models/roles');
 
 const bcrypt = require('bcrypt');
 
+
+/**
+ * cb_basicAuth
+ * @description Authenticates user against credentials within database
+ * @param {string} uName - Username of user
+ * @param {string} password - Password of user
+ * @param {function} done - Callback
+ */
 const cb_basicAuth = async (uName, password, done) => {
 
 	// Instantiate result as undefined
