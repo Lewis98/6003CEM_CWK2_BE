@@ -1,0 +1,118 @@
+{
+
+"$schema": "https://json-schema.org/draft-04/schema#",
+"definitions": {
+	"user": {
+
+		"title": "User",
+		"description": "A user account entity",
+
+		"type": "object",
+		"properties": {
+			"username": {
+				"type": "string",
+				"maxLength": 50,
+		
+				"description": "Human friendly user identification for login"
+			},
+		
+			"password": {
+				"type": "string",
+		
+				"description": "Password to authenticate login - Encrypted"
+			},
+		
+			"email": {
+				"type": "string",
+		
+				"description": "User's email account"
+			},
+		
+			"firstName": {
+				"type": "string",
+				"maxLength": 50,
+		
+				"description": "first name"
+			},
+				
+			"lastName": {
+				"type": "string",
+				"maxLength": 50,
+		
+				"description": "last name"
+			},
+	
+			"profileImg": {
+				"type": "string",
+				"maxLength": 50,
+		
+				"description": "URI for user's profile avatar"
+			}
+		},
+
+		"required": ["username", "password", "email"],
+		"additionalProperties": false
+	},
+	"userEdited": {
+		"$id": "#userEdit",
+		"title": "User Edited",
+		"description": "Confirmation of successful action against User",
+		"type": "object",
+		"properties": {
+			"ID": {
+				"description": "ID of affected user",
+				"type": "Integer"
+			}
+		}
+	},
+	"allUsersRetrieved": {
+		"$id": "#allUsersRetrieved",
+		"title": "User list Retrieved",
+		"description": "Format of element in list of users retrieved",
+		"type": "object",
+		"properties": {
+			"ID": {
+				"description": "User numeric ID",
+				"type": "Integer"
+			},
+			"username": {
+				"description": "User string ID",
+				"type": "String"
+			},
+			"firstName": {
+				"description": "First name of User",
+				"type": "String"
+			},
+			"lastName": {
+				"description": "Last name of User",
+				"type": "String"
+			},
+			"profileImg": {
+				"description": "Base64 encoded Image used as profile avatar",
+				"type": "String"
+			},
+			"email": {
+				"description": "User Email",
+				"type": "String"
+			},
+			"dateRegistered": {
+				"description": "Registration date of user",
+				"type": "Date"
+			}
+		}
+	},
+	"userRetrieved":{
+		"$id": "#userRetrieved",
+		"title": "User Retrieved",
+		"description": "Format of user retrieval",
+		"type": "object",
+		"allOf": [{ "$ref": "#/definitions/allUsersRetrieved" }],
+		"properties": {
+			"roles": {
+				"description": "List of roles held by user",
+				"type": "Array"
+			}
+		}
+	}
+}
+}

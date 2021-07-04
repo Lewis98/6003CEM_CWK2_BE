@@ -1,8 +1,21 @@
+/**
+ * Database interface module
+ *
+ * @module helpers/database
+ * @author Lewis Stokes
+ */
+
+
 const mysql = require('promise-mysql');
 const cfgFile = require('../config');
 
 
-// Execute query
+/**
+ * exec
+ * @description Execute SQL query on database
+ * @param {string} query - Query string to execute
+ * @param {*} data - Data for insertion into query string
+ */
 exports.exec = async function exec (query, data) {
 	try {
 		// Establish connection

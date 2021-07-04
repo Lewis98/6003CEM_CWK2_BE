@@ -1,0 +1,147 @@
+openapi: 3.0.0
+
+info:
+        version: 1.0.0
+        title: The Trading License Department API
+        description: Back end API for TLD license application and review
+        contact:
+                name: Lewis Stokes
+                email: stokesl4@coventry.ac.uk
+        license:
+                name: Apache 2.0
+                url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+        - url: 'https://swim-armani-3000.codio-box.uk/api/v1'
+          description: Development server
+
+tags:
+        - name: Users
+          description: Endpoints for user manipulation
+
+        - name: Applications
+          description: Endpoints for license application manipulation
+
+paths:
+        /users/:
+                summary: Represents user resource
+                description: >
+                       This resource represents user resources stored wtihin the database.
+                get:
+                        tags:
+                                - Users
+                        description:
+                                Retrieve all users from database.
+                        responses:
+                                '200':
+                                        description: All users retrieved
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./user.json#/definitions/allUsersRetrieved
+                                '403':
+                                        description: User does not have the necessary permissions to perform this action.
+                                '500':
+                                        description: Internal Server Error.
+                                
+                post:
+                        tags:
+                                - Users
+                        description:
+                                Create a new user account.
+                        requestBody:
+                                description: New user data to be added to the datastore.
+                                required: true
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: ./user.json#/definitions/user
+                        responses:
+                                '201':
+                                        description: User created successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./user.json#/definitions/userEdited
+                                '500':
+                                        description: user not created due to internal server error.
+
+        /users/{id}:
+                parameters:
+                        - in: path
+                          name: id
+                          schema:
+                                  type: integer
+                          required: true
+                          description: id of user account
+                get:
+                        tags:
+                                - Users
+                        description:
+                                Get user by id
+                        
+                        responses:
+                                '200':
+                                        description: User data and role returned.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./user.json#/definitions/userRetrieved
+                                '403':
+                                        description: Requesting user lacks the necessary permissions to view this record.
+                                '404':
+                                        description: User was not found in the DB.
+                                '500':
+                                        description: Internal Server Error - Failed to retrieve user.
+
+                put:
+                        tags:
+                                - Users
+                        description:
+                                Update user by id
+                        responses:
+                                '200':
+                                        description: User updated successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./user.json#/definitions/userEdited
+
+                                '403':
+                                        description: User lacks the necessary permissions to update this record.
+                                '404':
+                                        description: User record not found.
+                                '500':
+                                        description: Internal Server Error - Failed to update user.
+                delete:
+                        tags:
+                                - Users
+                        description:
+                                Remove user by id
+                        responses:
+                                '200':
+                                        description: User account deleted successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./user.json#/definitions/userEdited
+
+                                '403':
+                                        description: User lacks the necessary permissions to delete this record.
+                                '404':
+                                        description: User record not found.
+                                '500':
+                                        description: Internal Server Error - Failed to delete user.
+
+         /login:
+                 post:
+                         tags:
+                                 - Users
+                         description:
+                                 Get backend state information for user login details
+                         response:
+                                 '200':
+                                         description: Client successfull retrieved log in information for log in functionality
+                                         content:
+                                                 application/json:
+                                                         schema:
+                                                                 $ref: ./user.json#/definitions/userRetreived
