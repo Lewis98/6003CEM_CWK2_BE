@@ -246,7 +246,7 @@ async function updateUser(ctx, next){
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-async function removeUser(ctx, next){
+async function deleteUser(ctx, next){
 
 	// Retrieve id from URI parameters
 	const id = ctx.params.id;
