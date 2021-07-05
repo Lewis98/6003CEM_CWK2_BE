@@ -4,7 +4,7 @@
   "description": "Application for the matching of dogs and owners for 'The Canine Shelter'",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env DB_DATABASE=test_db jest --testTimeout=10000",
+    "test": "cross-env DB_DATABASE=test_db jest --testTimeout=100000",
     "test:watch": "cross-env DB_DATABASE=test_db jest --watch",
     "testDB:drop": "mysql --user=root --password=codio -e 'DROP DATABASE test_db;'",
     "testDB:create": "mysql --user=root --password=codio -e 'CREATE DATABASE test_db;'",

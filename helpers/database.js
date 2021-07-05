@@ -16,7 +16,7 @@ const cfgFile = require('../config');
  * @param {string} query - Query string to execute
  * @param {*} data - Data for insertion into query string
  */
-exports.exec = async function exec (query, data) {
+exports.exec = async (query, data) => {
 	try {
 		// Establish connection
 		const conn = await mysql.createConnection(cfgFile.config);
