@@ -129,9 +129,9 @@ async function newUser(ctx, next){
 	console.log("Registration request recieved:")
 	console.log(body);
 
-	
-	// Endpoint works but returns 404 on success 
-	ctx.status = 201;
+
+	// Response moved up due to bug with 404 response despite successful execution 
+	ctx.status = 201
 
 
 	
@@ -152,10 +152,11 @@ async function newUser(ctx, next){
 			if (result) {
 				// Log success
 				console.log (`'${body.username}' successfully created in database with values:`)
-				console.log (body);
+				
 
 				// Get ID from new record
 				const id = result.insertId;
+
 				
 				// Add role to role assignment table
 				const roleAssignment = await model_roles.assignRole(id, role);

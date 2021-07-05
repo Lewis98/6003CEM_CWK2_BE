@@ -132,7 +132,9 @@ paths:
                                 '500':
                                         description: Internal Server Error - Failed to delete user.
 
+
         /users/login:
+
                  post:
                          tags:
                                  - Users
