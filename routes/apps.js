@@ -12,6 +12,8 @@ const model = require('../models/applications');
 const authenticate = require('../controllers/auth');
 const {validate} = require('../controllers/validation');
 
+const can = require('../permissions/apps');
+
 const prefix = '/api/v1/'
 const router = Router({prefix: prefix + 'applications'});
 
@@ -35,6 +37,14 @@ router.del('/:id([0-9]{1,})', authenticate, deleteApp);
  */
 async function getAll(ctx, next){
 	//Return all applications from database
+	
+	const perm = can.readAll(ctx.state.user);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+	
 
 	let applications = await model.getAll();
 
@@ -56,13 +66,22 @@ async function getAll(ctx, next){
  * @param {function} next - Callback
  */
 async function getById(ctx, next){
+
 	let id = ctx.params.id;
 
 	// Get application record from database with specified ID
-	let application = await model.getById(id);	
+	let application = await model.getById(id);
 
 	// If response is not empty
 	if (application.length) {
+
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+
 		const links = {
 			user: `https://${ctx.host}${prefix}users/${application[0].applicant_id}`
 		}
@@ -92,6 +111,15 @@ async function getByUserId(ctx, next) {
 
 	// If response is not empty
 	if (application.length) {
+		
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+		
+		
 		// Send result in response body
 		ctx.body = application;
 
@@ -149,9 +177,7 @@ async function createApp(ctx, next) {
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-async function updateApp(ctx, next){
-	
-	// TODO: Input validation	
+async function updateApp(ctx, next){	
 	
 	// Parse body of request and retrieve data
 	const id = ctx.params.body;
@@ -170,12 +196,20 @@ async function updateApp(ctx, next){
 		return;
 	};
 
+	const perm = can.read(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+
+
 	// Overwrite existing data with request body data
 	// or retain data from original record where request data is absent
 	Object.assign(record, body);
 
 	// Overwrite database record with edited record using model
-	const result = await model.updateDog(record);
+	const result = await model.update(record);
 
 	// If response from database indicated change
 	if (result.affectedRows) {
@@ -198,9 +232,30 @@ async function deleteApp(ctx, next){
 	// (requires authentication)
 	
 	const id = ctx.params.id;
+	
+	// Get record to delete
+	let record = await model.getById(id);
 
-	// Get record to update
-	let record = await model.removeDog(id);
+	// If record doesn't exist
+	if (!record.length){
+		// Set status to resource not found
+		ctx.status = 404;
+		// Set response body to display null ID
+		ctx.body = {ID: null};
+		// Cancel operation
+		return;
+	};
+
+	const perm = can.read(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+
+
+	// Call remove method in model and assign to record result
+	record = await model.remove(id);
 
 	// If record deleted
 	if (record.affectedRows){
