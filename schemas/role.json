@@ -1,0 +1,21 @@
+{
+	"$schema": "https://json-schema.org/draft-04/schema#",
+	"definitions": {
+		"role": {
+			"title": "Role",
+			"description": "A role type that can be assigned to users",
+
+			"type": "object",
+			"properties": {
+				"role": {
+					"type": "string",
+					"maxLength": 50,
+		
+					"description": "Name of role"
+				}
+			},
+	
+			"required": ["role"]
+		}
+	}
+}
