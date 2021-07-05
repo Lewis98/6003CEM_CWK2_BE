@@ -14,6 +14,7 @@ const pkg = require('jsonschema');
 // This allows a single function to perform validation for all schemas
 const schemas = {
 	application: require('../schemas/app.json').definitions.application,
+	image: require('../schemas/app.json').definitions.image,
 	user: require('../schemas/user.json').definitions.user,
 	role: require('../schemas/role.json').definitions.role
 };
@@ -25,7 +26,7 @@ const v = new pkg.Validator();
 /**
  * @function
  * Koa middleware validation function
- * @param {string} schema_str - Dictionary Key to identify appropriate schema values: [application, user, role]
+ * @param {string} schema_str - Dictionary Key to identify appropriate schema values: [application, user, role, image]
  * @param {object} ctx - Koa request context object to validate
  * @param {function} next - Koa next callback
  */

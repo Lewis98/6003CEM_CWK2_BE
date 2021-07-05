@@ -132,7 +132,7 @@ paths:
                                 '500':
                                         description: Internal Server Error - Failed to delete user.
 
-         /login:
+        /users/login:
                  post:
                          tags:
                                  - Users
@@ -145,3 +145,192 @@ paths:
                                                  application/json:
                                                          schema:
                                                                  $ref: ./user.json#/definitions/userRetreived
+        /users/role/{id}:
+                parameters:
+                        - in: path
+                          name: id
+                          schema:
+                                  type: integer
+                          required: true
+                          description: id of user account
+                post:
+                        tags:
+                                - Users
+                        description:
+                                Represents roles assigned to user
+                        responses:
+                                '200':
+                                        description: Role successfully assigned to user.
+                                '403':
+                                        description: User lacks the necessary permissions to change roles
+                                '404':
+                                        description: Role could not be found
+                                '500':
+                                        description: Internal Server Error - Failed to assign role
+
+
+        /apps/:
+                summary: Represents license application resource
+                description: >
+                       This resource represents license application resources stored within the database.
+                get:
+                        tags:
+                                - Applications
+                        description:
+                                Retrieve all license applications from database.
+                        responses:
+                                '200':
+                                        description: All license applications retrieved
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/allAppsRetrieved
+                                '403':
+                                        description: User does not have the necessary permissions to perform this action.
+                                '500':
+                                        description: Internal Server Error.
+                                
+                post:
+                        tags:
+                                - Applications
+                        description:
+                                Create a license application.
+                        requestBody:
+                                description: New license application data to be added to the datastore.
+                                required: true
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: ./app.json#/definitions/application
+                        responses:
+                                '201':
+                                        description: Application created successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/applicationCreated
+                                '500':
+                                        description: Application not created due to internal server error.
+        /apps/user/{id}:
+                parameters:
+                        - in: path
+                          name: id
+                          schema:
+                                  type: integer
+                          required: true
+                          description: id of user to search against.
+                get:
+                        tags:
+                                - Applications
+                        description:
+                                Get all license applications made by user
+                        
+                        responses:
+                                '200':
+                                        description: License applications returned.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/application
+                                '403':
+                                        description: Requesting user lacks the necessary permissions to view this record.
+                                '404':
+                                        description: No license applications were found in the DB.
+                                '500':
+                                        description: Internal Server Error - Failed to retrieve applications.
+
+
+        /apps/{id}:
+                parameters:
+                        - in: path
+                          name: id
+                          schema:
+                                  type: integer
+                          required: true
+                          description: id of license application.
+                get:
+                        tags:
+                                - Applications
+                        description:
+                                Get license application by ID
+                        
+                        responses:
+                                '200':
+                                        description: License application returned.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/application
+                                '403':
+                                        description: Requesting user lacks the necessary permissions to view this record.
+                                '404':
+                                        description: License application was not found in the DB.
+                                '500':
+                                        description: Internal Server Error - Failed to retrieve application.
+
+                put:
+                        tags:
+                                - Applications
+                        description:
+                                Update license application by id
+                        responses:
+                                '200':
+                                        description: Application updated successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/applicationCreated
+
+                                '403':
+                                        description: User lacks the necessary permissions to update this record.
+                                '404':
+                                        description: License application was not found in the DB.
+                                '500':
+                                        description: Internal Server Error - Failed to update application.
+                delete:
+                        tags:
+                                - Applications
+                        description:
+                                Remove license application by id
+                        responses:
+                                '200':
+                                        description: License application deleted successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/applicationCreated
+
+                                '403':
+                                        description: User lacks the necessary permissions to delete this record.
+                                '404':
+                                        description: License application was not found in the DB.
+                                '500':
+                                        description: Internal Server Error - Failed to delete application.
+        
+        /apps/image:
+                post:
+                        tags:
+                                - Applications
+                        description:
+                                Upload an image attached to license application.
+                        requestBody:
+                                description: New image to link to license application.
+                                required: true
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: ./app.json#/definitions/image
+                        responses:
+                                '201':
+                                        description: Image uploaded successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/applicationCreated
+                                '403':
+                                        description: User lacks necessary permissions to upload image against this application.
+                                '404':
+                                        description: License application not found.
+                                '500':
+                                        description: Image not uploaded due to internal server error.
+

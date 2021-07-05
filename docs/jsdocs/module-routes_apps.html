@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: routes/users</title>
+    <title>JSDoc: Module: routes/apps</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: routes/users</h1>
+    <h1 class="page-title">Module: routes/apps</h1>
 
     
 
@@ -40,7 +40,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Routes module for user</div>
+            <div class="description">Routes module for license applications</div>
         
 
         
@@ -96,7 +96,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line1">line 1</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -132,7 +132,7 @@
     
 
     
-    <h4 class="name" id="module:routes/users"><span class="type-signature"></span>module:routes/users<span class="type-signature"></span></h4>
+    <h4 class="name" id="module:routes/apps"><span class="type-signature"></span>module:routes/apps<span class="type-signature"></span></h4>
     
 
     
@@ -140,7 +140,7 @@
 
 
 <div class="description">
-    User Routes
+    Application routes
 </div>
 
 
@@ -184,7 +184,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line363">line 363</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line224">line 224</a>
     </li></ul></dd>
     
 
@@ -241,7 +241,7 @@
     
 
     
-    <h4 class="name" id="~changeRole"><span class="type-signature">(async, inner) </span>changeRole<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~createApp"><span class="type-signature">(async, inner) </span>createApp<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
     
 
     
@@ -249,7 +249,7 @@
 
 
 <div class="description">
-    Changes user role
+    Creates a new license application with data from request body
 </div>
 
 
@@ -365,7 +365,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line250">line 250</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line111">line 111</a>
     </li></ul></dd>
     
 
@@ -401,7 +401,7 @@
     
 
     
-    <h4 class="name" id="~deleteUser"><span class="type-signature">(async, inner) </span>deleteUser<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~deleteApp"><span class="type-signature">(async, inner) </span>deleteApp<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
     
 
     
@@ -409,7 +409,7 @@
 
 
 <div class="description">
-    Deletes user record specified by id in URI
+    Deletes license application from database
 </div>
 
 
@@ -525,7 +525,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line302">line 302</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line196">line 196</a>
     </li></ul></dd>
     
 
@@ -569,7 +569,7 @@
 
 
 <div class="description">
-    Returns all users from DB.
+    Returns all applications from DB.
 </div>
 
 
@@ -685,7 +685,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line43">line 43</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -729,7 +729,7 @@
 
 
 <div class="description">
-    Returns single user from DB identified by ID.
+    getById
 </div>
 
 
@@ -845,7 +845,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line75">line 75</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -881,7 +881,7 @@
     
 
     
-    <h4 class="name" id="~login"><span class="type-signature">(async, inner) </span>login<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~getByUserId"><span class="type-signature">(async, inner) </span>getByUserId<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
     
 
     
@@ -889,7 +889,7 @@
 
 
 <div class="description">
-    Returns user information stored in context state user object (populated throughout validation module)
+    Returns all license applications with applicant ID matching specified URI paramter ID
 </div>
 
 
@@ -1005,174 +1005,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line349">line 349</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>strategies/basic for authentication used by function</li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~newUser"><span class="type-signature">(async, inner) </span>newUser<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Creates new user entry in database
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>ctx</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Context object of HTTP Request</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>next</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line116">line 116</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line87">line 87</a>
     </li></ul></dd>
     
 
@@ -1208,7 +1041,7 @@
     
 
     
-    <h4 class="name" id="~updateUser"><span class="type-signature">(async, inner) </span>updateUser<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~updateApp"><span class="type-signature">(async, inner) </span>updateApp<span class="signature">(ctx, next)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1216,7 +1049,7 @@
 
 
 <div class="description">
-    Updates user record with information provided in request body
+    Updates license application with data from request body
 </div>
 
 
@@ -1332,7 +1165,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_users.js.html">routes/users.js</a>, <a href="routes_users.js.html#line200">line 200</a>
+        <a href="routes_apps.js.html">routes/apps.js</a>, <a href="routes_apps.js.html#line152">line 152</a>
     </li></ul></dd>
     
 
