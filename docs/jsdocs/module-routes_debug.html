@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: helpers/database</title>
+    <title>JSDoc: Module: routes/debug</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: helpers/database</h1>
+    <h1 class="page-title">Module: routes/debug</h1>
 
     
 
@@ -38,7 +38,7 @@
     <div class="container-overview">
     
         
-            <div class="description">Database interface module</div>
+            <div class="description">Module for debug routes used to test connectivity</div>
         
 
         
@@ -94,7 +94,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_database.js.html">helpers/database.js</a>, <a href="helpers_database.js.html#line1">line 1</a>
+        <a href="routes_debug.js.html">routes/debug.js</a>, <a href="routes_debug.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -151,7 +151,7 @@
     
 
     
-    <h4 class="name" id=".exec"><span class="type-signature">(static) </span>exec<span class="signature">(query, data)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~helloWorld"><span class="type-signature">(inner) </span>helloWorld<span class="signature">(ctx)</span><span class="type-signature"></span></h4>
     
 
     
@@ -159,7 +159,7 @@
 
 
 <div class="description">
-    Execute SQL query on database
+    Basic endpoint that returns Hello World when accessed
 </div>
 
 
@@ -195,13 +195,13 @@
 
         <tr>
             
-                <td class="name"><code>query</code></td>
+                <td class="name"><code>ctx</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
             
@@ -211,30 +211,7 @@
 
             
 
-            <td class="description last">Query string to execute</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">*</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Data for insertion into query string</td>
+            <td class="description last">Context object of HTTP Request</td>
         </tr>
 
     
@@ -275,7 +252,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_database.js.html">helpers/database.js</a>, <a href="helpers_database.js.html#line19">line 19</a>
+        <a href="routes_debug.js.html">routes/debug.js</a>, <a href="routes_debug.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -311,7 +288,7 @@
     
 
     
-    <h4 class="name" id="~DB_Exception"><span class="type-signature">(inner) </span>DB_Exception<span class="signature">(msg, err_code)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~privateAPI"><span class="type-signature">(inner) </span>privateAPI<span class="signature">(ctx)</span><span class="type-signature"></span></h4>
     
 
     
@@ -319,7 +296,7 @@
 
 
 <div class="description">
-    Custom exception object for catching promise rejection
+    Basic endpoint for testing of user authentication
 </div>
 
 
@@ -355,13 +332,13 @@
 
         <tr>
             
-                <td class="name"><code>msg</code></td>
+                <td class="name"><code>ctx</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
             
@@ -371,30 +348,7 @@
 
             
 
-            <td class="description last">Error message</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>err_code</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Error code</td>
+            <td class="description last">Context object of HTTP Request</td>
         </tr>
 
     
@@ -435,7 +389,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_database.js.html">helpers/database.js</a>, <a href="helpers_database.js.html#line48">line 48</a>
+        <a href="routes_debug.js.html">routes/debug.js</a>, <a href="routes_debug.js.html#line35">line 35</a>
     </li></ul></dd>
     
 
@@ -481,17 +435,13 @@
 </div>
 
 <nav>
-
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers_auth.html">controllers/auth</a></li><li><a href="module-controllers_validation.html">controllers/validation</a></li><li><a href="module-helpers_database.html">helpers/database</a></li><li><a href="module-permissions_users.html">permissions/users</a></li><li><a href="module-routes_apps.html">routes/apps</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="module-strategies_basic.html">strategies/basic</a></li></ul>
-
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers_auth.html">controllers/auth</a></li><li><a href="module-controllers_validation.html">controllers/validation</a></li><li><a href="module-helpers_database.html">helpers/database</a></li><li><a href="module-models_applications.html">models/applications</a></li><li><a href="module-models_roles.html">models/roles</a></li><li><a href="module-models_users.html">models/users</a></li><li><a href="module-permissions_users.html">permissions/users</a></li><li><a href="module-routes_apps.html">routes/apps</a></li><li><a href="module-routes_debug.html">routes/debug</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="module-strategies_basic.html">strategies/basic</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jul 05 2021 12:51:53 GMT+0000 (GMT)
-
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jul 05 2021 03:49:40 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

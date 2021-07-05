@@ -12,6 +12,8 @@ const model = require('../models/applications');
 const authenticate = require('../controllers/auth');
 const {validate} = require('../controllers/validation');
 
+const can = require('../permissions/apps');
+
 const prefix = '/api/v1/'
 const router = Router({prefix: prefix + 'applications'});
 
@@ -21,8 +23,9 @@ router.get('/:id([0-9]{1,})', authenticate, getById);
 router.get('/user/:id([0-9]{1,})', authenticate, getByUserId);
 
 router.post('/', authenticate, validate("application"), bodyParser(), createApp);
+router.post('/image', authenticate, validate("image"), bodyParser(), addImage);
 
-router.put('/:id([0-9]{1,})', authenticate, updateApp);
+router.put('/:id([0-9]{1,})', authenticate, bodyParser(), updateApp);
 
 router.del('/:id([0-9]{1,})', authenticate, deleteApp);
 
@@ -30,11 +33,19 @@ router.del('/:id([0-9]{1,})', authenticate, deleteApp);
 /**
  * getAll
  * @description Returns all applications from DB.
- * @oarm {object} ctx - Context object of HTTP Request
+ * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
 async function getAll(ctx, next){
 	//Return all applications from database
+	
+	const perm = can.readAll(ctx.state.user);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+	
 
 	let applications = await model.getAll();
 
@@ -49,14 +60,33 @@ async function getAll(ctx, next){
 	}
 }
 
+/**
+ * getById
+ * @decription Returns license application by specified ID in URI parameters
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
 async function getById(ctx, next){
+
 	let id = ctx.params.id;
 
 	// Get application record from database with specified ID
-	let application = await model.getById(id);	
+	let application = await model.getById(id);
 
 	// If response is not empty
 	if (application.length) {
+
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+
+		let images = await model.getImages(application[0].id);
+
+		application[0].images = images;
+
 		const links = {
 			user: `https://${ctx.host}${prefix}users/${application[0].applicant_id}`
 		}
@@ -72,6 +102,12 @@ async function getById(ctx, next){
 	}
 }
 
+/**
+ * getByUserId
+ * @description Returns all license applications with applicant ID matching specified URI paramter ID
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
 async function getByUserId(ctx, next) {
 	let id = ctx.params.id;
 
@@ -80,6 +116,15 @@ async function getByUserId(ctx, next) {
 
 	// If response is not empty
 	if (application.length) {
+		
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+		
+		
 		// Send result in response body
 		ctx.body = application;
 
@@ -90,6 +135,12 @@ async function getByUserId(ctx, next) {
 
 }
 
+/**
+ * createApp
+ * @description Creates a new license application with data from request body
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
 async function createApp(ctx, next) {
 	
 	// Parse body of request and retrieve data
@@ -125,15 +176,117 @@ async function createApp(ctx, next) {
 	
 }
 
-async function updateApp(ctx, next){
+/**
+ * addImage
+ * @description Adds image to images database, allows users to attach images to license application
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function addImage(ctx, next){
 	
-	// TODO: Input validation	
+	const body = ctx.request.body;
+
+	console.log(body);
+	
+	// Get record to update
+	let record = await model.getById(body.app_id);
+
+	// If record doesn't exist
+	if (!record.length){
+		// Set status to resource not found
+		ctx.status = 404;
+		// Set response body to display null ID
+		ctx.body = {ID: null};
+		// Cancel operation
+		return;
+	};
+
+	const perm = can.update(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+
+	const result = await model.newImage(body);
+
+	// If response from database indicated change
+	if (result.length) {
+		// Set status code to image created
+		ctx.status = 201;
+	}else{
+		ctx.status = 500;
+	}
+
+}
+
+/**
+ * updateApp
+ * @description Updates license application with data from request body
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function updateApp(ctx, next){	
 	
 	// Parse body of request and retrieve data
-	const id = ctx.params.body;
+	const id = ctx.params.id;
 	const body = ctx.request.body;
 
 	// Get record to update
+	let record = await model.getById(id);
+
+	console.log(record)
+	// If record doesn't exist
+	if (!record.length){
+		// Set status to resource not found
+		ctx.status = 404;
+		// Set response body to display null ID
+		ctx.body = {ID: null};
+		// Cancel operation
+		return;
+	};
+
+	const perm = can.update(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+	
+	record = record[0];
+
+	// Overwrite existing data with request body data
+	// or retain data from original record where request data is absent
+	Object.assign(record, body);
+
+	// Overwrite database record with edited record using model
+	const result = await model.update(record, record.id);
+
+	// If response from database indicated change
+	if (result.affectedRows) {
+		// Set status code to generic success
+		ctx.status = 200;
+		// Return ID in response body
+		ctx.body = {ID: id};
+	}else{
+		ctx.status = 500;
+	}
+
+}
+
+/**
+ * deleteApp
+ * @description Deletes license application from database
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function deleteApp(ctx, next){
+	
+	// (requires authentication)
+	
+	const id = ctx.params.id;
+	
+	// Get record to delete
 	let record = await model.getById(id);
 
 	// If record doesn't exist
@@ -146,31 +299,18 @@ async function updateApp(ctx, next){
 		return;
 	};
 
-	// Overwrite existing data with request body data
-	// or retain data from original record where request data is absent
-	Object.assign(record, body);
+	const perm = can.deleteApplication(ctx.state.user, record[0]);
 
-	// Overwrite database record with edited record using model
-	const result = await model.updateDog(record);
-
-	// If response from database indicated change
-	if (result.affectedRows) {
-		// Set status code to generic success
-		ctx.status = 200;
-		// Return ID in response body
-		ctx.body = {ID: id};
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
 	}
 
-}
 
-async function deleteApp(ctx, next){
-	
-	// (requires authentication)
-	
-	const id = ctx.params.id;
+	// Call remove method in model and assign to record result
+	record = await model.remove(id);
 
-	// Get record to update
-	let record = await model.removeDog(id);
+	console.log(record);
 
 	// If record deleted
 	if (record.affectedRows){
@@ -190,5 +330,5 @@ async function deleteApp(ctx, next){
 	
 }
 
-
+/** Application routes */
 module.exports = router;

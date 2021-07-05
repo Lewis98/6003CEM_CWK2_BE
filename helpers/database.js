@@ -28,15 +28,14 @@ exports.exec = async (query, data) => {
 		
 		// Wait for connection to end
 		await conn.end();
-	
-		// Return retrieved data
+
 		return result;
 	} catch (err) {
 		// Log exception (e), query and data to console if error
 		console.error(err.message, query, data);
 
-		throw new DB_Exception('Database query error', err.code);
-	
+
+		throw new DB_Exception('Database query error', err.code);	
 	}
 }
 

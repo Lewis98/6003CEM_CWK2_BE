@@ -18,17 +18,16 @@ describe('Retrieve all users', () => {
 
 describe('Create new user', () => {
 	it('Should create a new user entry', async () => {
-		const res = await request(app.callback())
+		const res = (await request(app.callback())
 		.post('/api/v1/users/')
 		.send({
 			username:'UserXZDFRWSDHRQDSBDCNGR',
 			password:'test',
-			email:'test.user@testMail.com'
-		})
-		
+			email:'test.user@testMail.com'	
 
 
 		expect(res.statusCode).toEqual(201)
+
 	})
 })
 

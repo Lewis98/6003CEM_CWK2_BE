@@ -10,7 +10,6 @@ app.use(cors());
 const debug = require('./routes/debug');
 app.use(debug.routes());
 
-
 // Routes for license application manipulation
 const apps = require('./routes/apps.js');
 app.use(apps.routes());
@@ -19,9 +18,6 @@ app.use(apps.routes());
 const users = require('./routes/users.js');
 app.use(users.routes());
 
-// - - - UNUSED - - - \\
-const staff = require('./routes/employees.js');
-app.use(staff.routes());
 
 
 

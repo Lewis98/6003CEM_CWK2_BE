@@ -95,8 +95,7 @@ async function getById(ctx, next){
 		}else{
 			ctx.status = 500;
 		}
-	
-		console.log(user);
+
 
 		// Return result as response body
 		ctx.body = user;
@@ -130,8 +129,10 @@ async function newUser(ctx, next){
 	console.log("Registration request recieved:")
 	console.log(body);
 
+
 	// Response moved up due to bug with 404 response despite successful execution 
 	ctx.status = 201
+
 
 	
 	// Generate Salt (10 rounds of generation)
@@ -159,7 +160,7 @@ async function newUser(ctx, next){
 				
 				// Add role to role assignment table
 				const roleAssignment = await model_roles.assignRole(id, role);
-
+				
 				if (roleAssignment == undefined) {
 					// - - - Failed to create role for user - - - 
 					// Delete user record
@@ -364,4 +365,5 @@ async function login(ctx, next) {
 
 }
 
+/** User Routes */
 module.exports = router;
