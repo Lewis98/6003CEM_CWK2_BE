@@ -67,6 +67,13 @@
 			}
 		}
 
+	},
+	"allAppsRetrieved": {
+		"$id": "#allAppsRetrieved",
+		"title": "User list retrieved",
+		"description": "Format of license application data returned",
+		"type": "object",
+		"allOf": [{ "$ref": "#/definitions/application" }]
 	}
 }
 }

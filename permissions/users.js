@@ -65,6 +65,13 @@ exports.update = (req, data) => {
 };
 
 
+/**
+ * updateRole
+ * @description Checks whether user has permission to perform update operation on role assignments of users
+ * 
+ * @param {object} req - User object of requester
+ * @returns {boolean} User has sufficient permissions to complete action
+ */
 exports.updateRole = (req) => {
 	return ac.can(req.roles[0]).execute('update').sync().on('role');
 };
@@ -81,6 +88,4 @@ exports.updateRole = (req) => {
 exports.deleteUser = (req, data) => {
 	return ac.can(req.roles[0]).context({requester: req.ID, owner:data.ID}).execute('delete').sync().on('user');
 };
-
-//exports.read = (req, data) => ac.can(req.role).context
 
