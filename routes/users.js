@@ -95,8 +95,7 @@ async function getById(ctx, next){
 		}else{
 			ctx.status = 500;
 		}
-	
-		console.log(user);
+
 
 		// Return result as response body
 		ctx.body = user;
@@ -129,6 +128,12 @@ async function newUser(ctx, next){
 
 	console.log("Registration request recieved:")
 	console.log(body);
+
+	
+	// Endpoint works but returns 404 on success 
+	ctx.status = 201;
+
+
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
@@ -154,7 +159,7 @@ async function newUser(ctx, next){
 				
 				// Add role to role assignment table
 				const roleAssignment = await model_roles.assignRole(id, role);
-
+				
 				if (roleAssignment == undefined) {
 					// - - - Failed to create role for user - - - 
 					// Delete user record

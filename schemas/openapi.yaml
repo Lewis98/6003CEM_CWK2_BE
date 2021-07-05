@@ -306,4 +306,31 @@ paths:
                                         description: License application was not found in the DB.
                                 '500':
                                         description: Internal Server Error - Failed to delete application.
+        
+        /apps/image:
+                post:
+                        tags:
+                                - Applications
+                        description:
+                                Upload an image attached to license application.
+                        requestBody:
+                                description: New image to link to license application.
+                                required: true
+                                content:
+                                        application/json:
+                                                schema:
+                                                        $ref: ./app.json#/definitions/image
+                        responses:
+                                '201':
+                                        description: Image uploaded successfully.
+                                        content:
+                                                application/json:
+                                                        schema:
+                                                                $ref: ./app.json#/definitions/applicationCreated
+                                '403':
+                                        description: User lacks necessary permissions to upload image against this application.
+                                '404':
+                                        description: License application not found.
+                                '500':
+                                        description: Image not uploaded due to internal server error.
 

@@ -48,11 +48,35 @@
 				"maxLength": 10,
 			
 				"description": "Company address - Post Code"
+			},
+
+			"status": {
+				"type": "string",
+				"maxLength": 30,
+				
+				"description": "status of application"
 			}
 		},
 	
 		"required": ["co_name", "applicant_id", "co_addr_l1", "co_addr_pc"],
 		"additionalProperties": false
+	},
+	"image": {
+		"title": "Image database record",
+		"description": "Image record schema for upload",
+
+		"type": "object",
+		"properties": {
+			"app_id": {
+				"description": "Id of license application image is linked to",
+				"type": "Integer"
+			},
+			"image": {
+				"description": "Image data in Base64 format",
+				"type": "String"
+			},
+			"required": ["app_id", "image"]
+		}
 	},
 	"applicationCreated": {
 		"$id": "#applicationCreated",

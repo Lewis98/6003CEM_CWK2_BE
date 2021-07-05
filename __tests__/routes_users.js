@@ -15,6 +15,6 @@ describe('Create new user', () => {
 	
 
 		expect(res.statusCode).toEqual(201)
-		expect(res.body).toHaveProperty('created',true)
+		expect(res.body).toHaveProperty('ID',true)
 	})
 })
