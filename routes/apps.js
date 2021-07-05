@@ -18,7 +18,7 @@ const router = Router({prefix: prefix + 'applications'});
 
 router.get('/', authenticate, getAll);
 router.get('/:id([0-9]{1,})', authenticate, getById);
-router.get('/user/:id([0-9]{1,})', getByUserId);
+router.get('/user/:id([0-9]{1,})', authenticate, getByUserId);
 
 router.post('/', authenticate, validate("application"), bodyParser(), createApp);
 

@@ -20,7 +20,8 @@ ac.grant('admin')
   	.execute('read').on('user')
 	.execute('read').on('all_users')
 	.execute('update').on('user')
-	.execute('delete').on('user');
+	.execute('delete').on('user')
+	.execute('update').on('role');
 
 
 
@@ -61,6 +62,11 @@ exports.read = (req, data) => {
  */
 exports.update = (req, data) => {
 	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.ID}).execute('update').sync().on('user');
+};
+
+
+exports.updateRole = (req) => {
+	return ac.can(req.roles[0]).execute('update').sync().on('role');
 };
 
 

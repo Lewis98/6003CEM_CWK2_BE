@@ -29,6 +29,7 @@ router.get('/:id([0-9]{1,})', authenticate, getById);
 
 router.post('/', validate("user"), bodyParser(), newUser); // User Registration
 router.post('/login', authenticate, login); // User login
+router.post('/role/:id([0-9]{1,})', authenticate, bodyParser(), changeRole); // Change role
 
 router.put('/:id([0-9]{1,})', authenticate, validate("user"), updateUser);
 router.del('/:id([0-9]{1,})', authenticate, validate("user"), deleteUser);
@@ -199,7 +200,7 @@ async function newUser(ctx, next){
 async function updateUser(ctx, next){
 	
 	// Retrieve id of user from URI parameters
-	const id = ctx.params.body;
+	const id = ctx.params.id;
 	// Retrieve data from body of request
 	const body = ctx.request.body;
 	
@@ -228,6 +229,58 @@ async function updateUser(ctx, next){
 	Object.assign(record, body);
 
 	const result = await model.updateUser(record);
+
+	// If response indicates rows changed
+	if (result.affectedRows) {
+		// Return success to front end
+		ctx.status = 200;
+		ctx.body = {ID: id};
+	}else{
+		// Else return internal server error
+		ctx.status = 500;
+	}
+}
+
+/**
+ * changeRole
+ * @description Changes user role
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function changeRole(ctx, next){
+	// Retrieve id of user from URI parameters
+	const id = ctx.params.id;
+	// Retrieve data from body of request
+	const body = ctx.request.body;
+
+	console.log(id);
+	
+	// Retrieve record to update from database
+	let record = await model_roles.getRoleByName(body.role);
+	
+	// If role doesn't exist
+	if (!record.length){
+		// Send 404 response
+		ctx.status = 404;
+		ctx.body = {ID: null};
+		return;
+	};
+	
+	// Get permission status based on user role
+	const perm  = can.updateRole(ctx.state.user, record[0]);
+	// If permission is not granted
+	if (!perm.granted){
+		ctx.status = 403; // Return forbidden status code
+		return; // Return to prevent retrieval of data
+	}
+
+	// Otherwise role exists
+	
+	await model_roles.clearRoles(id);
+
+	const result = await model_roles.assignRole(id, record[0].id);
+
+	
 
 	// If response indicates rows changed
 	if (result.affectedRows) {

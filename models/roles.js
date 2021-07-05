@@ -41,6 +41,15 @@ exports.getAllRoles = async () => {
 
 }
 
+exports.getRoleByName = async (name) => {
+	const data = [name];
+	const query = "SELECT * FROM roles WHERE role = ?;";
+
+	let result = await db.exec(query, data);
+
+	return result;
+}
+
 exports.getRoleByID = async (id) => {
 
 	const data = [id];
@@ -99,9 +108,12 @@ exports.deleteRoleById = async (id) => {
 
 }
 
-// Unassign role from user
-exports.removeRole = async () => {
+// Unassign all roles from user
+exports.clearRoles = async (id) => {
+	const data = [id];
+	const query = "DELETE FROM role_assignments WHERE userId = ?;";
 
-	console.log("Role unassignment NOT IMPLIMENTED !!!!!")
+	let result = await db.exec(query, data);
 
+	return result;
 }
