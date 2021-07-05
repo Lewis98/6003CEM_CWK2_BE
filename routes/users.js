@@ -129,6 +129,10 @@ async function newUser(ctx, next){
 
 	console.log("Registration request recieved:")
 	console.log(body);
+
+	// Response moved up due to bug with 404 response despite successful execution 
+	ctx.status = 201
+
 	
 	// Generate Salt (10 rounds of generation)
 	body.passSalt = await bcrypt.genSalt(10);
@@ -147,10 +151,11 @@ async function newUser(ctx, next){
 			if (result) {
 				// Log success
 				console.log (`'${body.username}' successfully created in database with values:`)
-				console.log (body);
+				
 
 				// Get ID from new record
 				const id = result.insertId;
+
 				
 				// Add role to role assignment table
 				const roleAssignment = await model_roles.assignRole(id, role);

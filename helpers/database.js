@@ -22,18 +22,31 @@ exports.exec = async (query, data) => {
 		const conn = await mysql.createConnection(cfgFile.config);
 
 		// Run query on database
-		let result = await conn.query(query, data);
+		let result = await conn.query(query, data).catch((e) => {
+			console.error(e);
+		});
 		
 		// Wait for connection to end
 		await conn.end();
 	
 		// Return retrieved data
 		return result;
-	}catch (e) {
+	} catch (err) {
 		// Log exception (e), query and data to console if error
-		console.error(e, query, data);
+		console.error(err.message, query, data);
 
-		throw 'Database query error';
+		throw new DB_Exception('Database query error', err.code);
 	
 	}
+}
+
+/**
+ * Custom exception object for catching promise rejection
+ * @param {string} msg - Error message
+ * @param {number} err_code - Error code
+ */
+function DB_Exception(msg, err_code) {
+	this.message = msg;
+	this.code = err_code;
+	this.name = "DB_Exception";
 }

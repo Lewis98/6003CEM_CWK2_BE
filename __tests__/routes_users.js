@@ -3,6 +3,19 @@ const app = require('../app');
 
 jest.useFakeTimers()
 
+
+describe('Retrieve all users', () => {
+	it('Should return a list of records containing at least essential fields', async() => {
+		const res = await request(app.callback())
+		.get('/')
+		.auth('admin', 'admin')
+		
+		expect(res.statusCode).toEqual(200);
+	})
+})
+
+
+
 describe('Create new user', () => {
 	it('Should create a new user entry', async () => {
 		const res = await request(app.callback())
@@ -13,9 +26,9 @@ describe('Create new user', () => {
 			email:'test.user@testMail.com'
 		})
 		
-		done();
+
 
 		expect(res.statusCode).toEqual(201)
-		expect(res.body).toHaveProperty('created',true)
 	})
 })
+
