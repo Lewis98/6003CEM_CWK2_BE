@@ -36,6 +36,8 @@ function helloWorld(ctx) {
 function privateAPI(ctx) {
 	const user = ctx.state.user;
 
+	ctx.status = 200;
+
 	ctx.body = {message: `Private route request made by '${user.username}'`}
 }
 

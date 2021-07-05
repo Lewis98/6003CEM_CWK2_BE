@@ -40,6 +40,8 @@ const model = require('../models/applications');
 const authenticate = require('../controllers/auth');
 const {validate} = require('../controllers/validation');
 
+const can = require('../permissions/apps');
+
 const prefix = '/api/v1/'
 const router = Router({prefix: prefix + 'applications'});
 
@@ -49,8 +51,9 @@ router.get('/:id([0-9]{1,})', authenticate, getById);
 router.get('/user/:id([0-9]{1,})', authenticate, getByUserId);
 
 router.post('/', authenticate, validate("application"), bodyParser(), createApp);
+router.post('/image', authenticate, validate("image"), bodyParser(), addImage);
 
-router.put('/:id([0-9]{1,})', authenticate, updateApp);
+router.put('/:id([0-9]{1,})', authenticate, bodyParser(), updateApp);
 
 router.del('/:id([0-9]{1,})', authenticate, deleteApp);
 
@@ -58,13 +61,19 @@ router.del('/:id([0-9]{1,})', authenticate, deleteApp);
 /**
  * getAll
  * @description Returns all applications from DB.
-
  * @param {object} ctx - Context object of HTTP Request
-
  * @param {function} next - Callback
  */
 async function getAll(ctx, next){
 	//Return all applications from database
+	
+	const perm = can.readAll(ctx.state.user);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+	
 
 	let applications = await model.getAll();
 
@@ -79,22 +88,33 @@ async function getAll(ctx, next){
 	}
 }
 
-
 /**
  * getById
  * @decription Returns license application by specified ID in URI parameters
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-
 async function getById(ctx, next){
+
 	let id = ctx.params.id;
 
 	// Get application record from database with specified ID
-	let application = await model.getById(id);	
+	let application = await model.getById(id);
 
 	// If response is not empty
 	if (application.length) {
+
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+
+		let images = await model.getImages(application[0].id);
+
+		application[0].images = images;
+
 		const links = {
 			user: `https://${ctx.host}${prefix}users/${application[0].applicant_id}`
 		}
@@ -110,14 +130,12 @@ async function getById(ctx, next){
 	}
 }
 
-
 /**
  * getByUserId
  * @description Returns all license applications with applicant ID matching specified URI paramter ID
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-
 async function getByUserId(ctx, next) {
 	let id = ctx.params.id;
 
@@ -126,6 +144,15 @@ async function getByUserId(ctx, next) {
 
 	// If response is not empty
 	if (application.length) {
+		
+		const perm = can.read(ctx.state.user, application[0]);
+
+		if (!perm.granted){
+			ctx.status = 403;
+			return;
+		}
+		
+		
 		// Send result in response body
 		ctx.body = application;
 
@@ -136,14 +163,12 @@ async function getByUserId(ctx, next) {
 
 }
 
-
 /**
  * createApp
  * @description Creates a new license application with data from request body
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-
 async function createApp(ctx, next) {
 	
 	// Parse body of request and retrieve data
@@ -179,6 +204,48 @@ async function createApp(ctx, next) {
 	
 }
 
+/**
+ * addImage
+ * @description Adds image to images database, allows users to attach images to license application
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function addImage(ctx, next){
+	
+	const body = ctx.request.body;
+
+	console.log(body);
+	
+	// Get record to update
+	let record = await model.getById(body.app_id);
+
+	// If record doesn't exist
+	if (!record.length){
+		// Set status to resource not found
+		ctx.status = 404;
+		// Set response body to display null ID
+		ctx.body = {ID: null};
+		// Cancel operation
+		return;
+	};
+
+	const perm = can.update(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+
+	
+	try{
+		const result = await model.newImage(body);
+	
+		ctx.status = 201;
+	}catch (error){
+		ctx.status = 500;
+	}
+
+}
 
 /**
  * updateApp
@@ -186,16 +253,67 @@ async function createApp(ctx, next) {
  * @param {object} ctx - Context object of HTTP Request
  * @param {function} next - Callback
  */
-
-async function updateApp(ctx, next){
-	
-	// TODO: Input validation	
+async function updateApp(ctx, next){	
 	
 	// Parse body of request and retrieve data
-	const id = ctx.params.body;
+	const id = ctx.params.id;
 	const body = ctx.request.body;
 
 	// Get record to update
+	let record = await model.getById(id);
+
+	console.log(record)
+	// If record doesn't exist
+	if (!record.length){
+		// Set status to resource not found
+		ctx.status = 404;
+		// Set response body to display null ID
+		ctx.body = {ID: null};
+		// Cancel operation
+		return;
+	};
+
+	const perm = can.update(ctx.state.user, record[0]);
+
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
+	}
+	
+	record = record[0];
+
+	// Overwrite existing data with request body data
+	// or retain data from original record where request data is absent
+	Object.assign(record, body);
+
+	// Overwrite database record with edited record using model
+	const result = await model.update(record, record.id);
+
+	// If response from database indicated change
+	if (result.affectedRows) {
+		// Set status code to generic success
+		ctx.status = 200;
+		// Return ID in response body
+		ctx.body = {ID: id};
+	}else{
+		ctx.status = 500;
+	}
+
+}
+
+/**
+ * deleteApp
+ * @description Deletes license application from database
+ * @param {object} ctx - Context object of HTTP Request
+ * @param {function} next - Callback
+ */
+async function deleteApp(ctx, next){
+	
+	// (requires authentication)
+	
+	const id = ctx.params.id;
+	
+	// Get record to delete
 	let record = await model.getById(id);
 
 	// If record doesn't exist
@@ -208,39 +326,18 @@ async function updateApp(ctx, next){
 		return;
 	};
 
-	// Overwrite existing data with request body data
-	// or retain data from original record where request data is absent
-	Object.assign(record, body);
+	const perm = can.deleteApplication(ctx.state.user, record[0]);
 
-	// Overwrite database record with edited record using model
-	const result = await model.updateDog(record);
-
-	// If response from database indicated change
-	if (result.affectedRows) {
-		// Set status code to generic success
-		ctx.status = 200;
-		// Return ID in response body
-		ctx.body = {ID: id};
+	if (!perm.granted){
+		ctx.status = 403;
+		return;
 	}
 
-}
 
+	// Call remove method in model and assign to record result
+	record = await model.remove(id);
 
-/**
- * deleteApp
- * @description Deletes license application from database
- * @param {object} ctx - Context object of HTTP Request
- * @param {function} next - Callback
- */
-
-async function deleteApp(ctx, next){
-	
-	// (requires authentication)
-	
-	const id = ctx.params.id;
-
-	// Get record to update
-	let record = await model.removeDog(id);
+	console.log(record);
 
 	// If record deleted
 	if (record.affectedRows){
@@ -260,9 +357,7 @@ async function deleteApp(ctx, next){
 	
 }
 
-
 /** Application routes */
-
 module.exports = router;
 </code></pre>
         </article>
@@ -274,17 +369,13 @@ module.exports = router;
 </div>
 
 <nav>
-
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers_auth.html">controllers/auth</a></li><li><a href="module-controllers_validation.html">controllers/validation</a></li><li><a href="module-helpers_database.html">helpers/database</a></li><li><a href="module-permissions_users.html">permissions/users</a></li><li><a href="module-routes_apps.html">routes/apps</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="module-strategies_basic.html">strategies/basic</a></li></ul>
-
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-controllers_auth.html">controllers/auth</a></li><li><a href="module-controllers_validation.html">controllers/validation</a></li><li><a href="module-helpers_database.html">helpers/database</a></li><li><a href="module-models_applications.html">models/applications</a></li><li><a href="module-models_roles.html">models/roles</a></li><li><a href="module-models_users.html">models/users</a></li><li><a href="module-permissions_users.html">permissions/users</a></li><li><a href="module-routes_apps.html">routes/apps</a></li><li><a href="module-routes_debug.html">routes/debug</a></li><li><a href="module-routes_users.html">routes/users</a></li><li><a href="module-strategies_basic.html">strategies/basic</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jul 05 2021 12:51:53 GMT+0000 (GMT)
-
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Mon Jul 05 2021 14:24:48 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

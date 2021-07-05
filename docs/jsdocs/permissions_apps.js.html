@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: permissions/users.js</title>
+    <title>JSDoc: Source: permissions/apps.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: permissions/users.js</h1>
+    <h1 class="page-title">Source: permissions/apps.js</h1>
 
     
 
@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Permissions module for user
+ * Permissions module for license applications
  *
  * @module permissions/users
  * @author Lewis Stokes
@@ -39,17 +39,18 @@ const ac = new AccessControl();
 
 // Controls setup
 ac.grant('user')
-	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('read').on('user', ['*', '!password'])
-	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('update').on('user', ['password', 'lastOnline', 'email', 'profileImg', 'firstName', 'lastName'])
-	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('delete').on('user', ['*'])
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('create').on('application', ['*', '!status'])
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('read').on('application', ['*'])
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('update').on('application', ['*', '!status'])
+	.condition({Fn:'EQUALS', args: {'requester':'$.owner'}}).execute('delete').on('application', ['*'])
 
 
 ac.grant('admin')
-  	.execute('read').on('user')
-	.execute('read').on('all_users')
-	.execute('update').on('user')
-	.execute('delete').on('user')
-	.execute('update').on('role');
+	.execute('read').on('all_applications')
+  	.execute('create').on('application')
+	.execute('read').on('application')
+	.execute('update').on('application')
+	.execute('delete').on('application')
 
 
 
@@ -57,64 +58,53 @@ ac.grant('admin')
 
 /**
  * readAll
- * @description Checks whether user has permission to retrieve all users
+ * @description Checks whether user has permission to retrieve all license applications
  *
  * @param {object} req - User object of requester
  * @returns {boolean} User has sufficient permissions to complete action
  */
 exports.readAll = (req) => {
-	return ac.can(req.roles[0]).execute('read').sync().on('all_users');
+	return ac.can(req.roles[0]).execute('read').sync().on('all_applications');
 };
 
 
 /**
  * read
- * @description Checks whether user has permission to perform read operation on user data
+ * @description Checks whether user has permission to perform read operation on license application
  *
  * @param {object} req - User object of requester
- * @param {object} data - User object of data to be read
+ * @param {object} data - License application object of data to be read
  * @returns {boolean} User has sufficient permissions to complete action
  */
 exports.read = (req, data) => {
-	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.ID}).execute('read').sync().on('user');
+	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.applicant_id}).execute('read').sync().on('application');
 };
 
 
 /**
  * update
- * @description Checks whether user has permission to perform update operation on user data
+ * @description Checks whether user has permission to perform update operation on license application data
  *
  * @param {object} req - User object of requester
- * @param {object} data - User object of data to be updated
+ * @param {object} data - license application object of data to be updated
  * @returns {boolean} User has sufficient permissions to complete action
  */
 exports.update = (req, data) => {
-	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.ID}).execute('update').sync().on('user');
+	return ac.can(req.roles[0]).context({requester:req.ID, owner:data.applicant_id}).execute('update').sync().on('application');
 };
 
 
-/**
- * updateRole
- * @description Checks whether user has permission to perform update operation on role assignments of users
- * 
- * @param {object} req - User object of requester
- * @returns {boolean} User has sufficient permissions to complete action
- */
-exports.updateRole = (req) => {
-	return ac.can(req.roles[0]).execute('update').sync().on('role');
-};
-
 
 /**
- * deleteUser
- * @description Checks whether user has permission to perform delete operation on user data
+ * deleteApplication
+ * @description Checks whether user has permission to perform delete operation on license application data
  *
  * @param {object} req - User object of requester
- * @param {object} data - User object to delete
- * @returns {boolean} User has sufficient permissions to delete account
+ * @param {object} data - License application object to delete
+ * @returns {boolean} User has sufficient permissions to delete application
  */
-exports.deleteUser = (req, data) => {
-	return ac.can(req.roles[0]).context({requester: req.ID, owner:data.ID}).execute('delete').sync().on('user');
+exports.deleteApplication = (req, data) => {
+	return ac.can(req.roles[0]).context({requester: req.ID, owner:data.applicant_id}).execute('delete').sync().on('application');
 };
 
 </code></pre>

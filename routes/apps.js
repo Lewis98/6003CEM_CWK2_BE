@@ -208,13 +208,12 @@ async function addImage(ctx, next){
 		return;
 	}
 
-	const result = await model.newImage(body);
-
-	// If response from database indicated change
-	if (result.length) {
-		// Set status code to image created
+	
+	try{
+		const result = await model.newImage(body);
+	
 		ctx.status = 201;
-	}else{
+	}catch (error){
 		ctx.status = 500;
 	}
 
