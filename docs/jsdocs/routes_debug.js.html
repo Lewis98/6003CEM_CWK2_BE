@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: routes/debug.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,59 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: routes/debug.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Module for debug routes used to test connectivity
+ *
+ * @module routes/debug
+ * @author Lewis Stokes
+ */
+
+const Router = require('koa-router');
+const bodyParser = require('koa-bodyparser');
+
+const authenticate = require('../controllers/auth');
+
+const router = Router({prefix: '/api/v1'})
+
+router.get('/', helloWorld)
+router.get('/private', authenticate, privateAPI);
 
 
-    <h3> </h3>
+/**
+ * helloWorld
+ * @description Basic endpoint that returns Hello World when accessed
+ * @param {object} ctx - Context object of HTTP Request
+ */
+function helloWorld(ctx) {
 
+	ctx.body = {message: "Hello World!"}
 
+}
 
+/**
+ * privateAPI
+ * @description Basic endpoint for testing of user authentication
+ * @param {object} ctx - Context object of HTTP Request
+ */
+function privateAPI(ctx) {
+	const user = ctx.state.user;
 
+	ctx.body = {message: `Private route request made by '${user.username}'`}
+}
 
-
-
-
-
-
-    
-
-
-
-
-
+module.exports = router;
+</code></pre>
+        </article>
+    </section>
 
 
 
